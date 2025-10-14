@@ -29,7 +29,7 @@ int IsEmptyLista(ListaEnt a)
 
 int IsFullLista(ListaEnt a)
 {
-    if (a->cant == MAXI)
+    if (a->cant == MAXI - 1)
     {
         return 1;
     }
@@ -52,6 +52,14 @@ ListaEnt CopyLista(ListaEnt a)
 void ResetLista(ListaEnt *a)(
     a->cursor = 0;
 )
+
+int IsOos(ListaEnt a){
+    if(a->cursor == MAXI){
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 void InsertLista(ListaEnt *a, int nuevo)
 {

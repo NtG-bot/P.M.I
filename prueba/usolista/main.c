@@ -17,8 +17,9 @@ void CargaInt(ListaEnt *b){
 ListaEnt MuestraInt(ListaEnt b){
     int i;
     ResetLista(*b);
-    for (i=0;i<b->aux;i++){
+    while(!IsOos(b)){
         printf("entero:%d\n", CopyLista(b));
+        ForwardLista(b);
     }
 }
 
