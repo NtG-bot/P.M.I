@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1760656055 source:c:\users\usuario\desktop\nueva carpeta\usolista\main.c
+	<stdio.h>
+	<stdlib.h>
+	"listaenteros.h"
+
+1760656377 c:\users\usuario\desktop\nueva carpeta\usolista\listaenteros.h
+
