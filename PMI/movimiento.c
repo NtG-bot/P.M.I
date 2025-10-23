@@ -1,38 +1,38 @@
 /*
  * Archivo: movimiento.c
- * Implementaci髇 de las funciones del TDA Movimiento.
+ * Implementaci贸n de las funciones del TDA Movimiento.
  */
 
 #include <stdio.h>      // Para printf, scanf.
 #include <string.h>     // Para strcpy (manejo de strings).
 #include "movimiento.h" // Se incluye la propia interfaz.
 
-// Genera IDs 鷑icos usando una variable est醫ica local.
+// Genera IDs 煤nicos usando una variable est谩tica local.
 long int generarNuevoIdMovimiento() {
     static long int proximo_id = 1; // Se inicializa solo la primera vez.
     return proximo_id++;            // Devuelve el ID actual y luego lo incrementa.
 }
 
-// Carga los datos de un movimiento pidiendo la informaci髇 al usuario.
+// Carga los datos de un movimiento pidiendo la informaci贸n al usuario.
 Movimiento cargarMovimiento(const char* alias_origen_unipago) {
     Movimiento nuevo_mov;
     int opcion_tipo_op, opcion_tipo_mov;
 
-    // --- Carga autom醫ica ---
-    nuevo_mov.id_mov = generarNuevoIdMovimiento(); // ID autom醫ico.
+    // --- Carga autom谩tica ---
+    nuevo_mov.id_mov = generarNuevoIdMovimiento(); // ID autom谩tico.
     strcpy(nuevo_mov.cuenta_origen, alias_origen_unipago); // Origen es nuestra cuenta.
     nuevo_mov.estado = OK; // Estado inicial es OK.
 
-    // --- Petici髇 de datos al usuario ---
+    // --- Petici贸n de datos al usuario ---
     printf("--- Nuevo Movimiento (ID: %ld) ---\n", nuevo_mov.id_mov);
     printf("Ingrese CBU/Alias de destino: ");
     scanf("%49s", nuevo_mov.cuenta_destino); // %49s para evitar desbordamiento del array.
 
-    // Validaci髇 de fecha.
+    // Validaci贸n de fecha.
     do {
         printf("Ingrese la fecha (dd mm) [ej: 25 10 para 25/Oct]: ");
         scanf("%d %d", &nuevo_mov.dia, &nuevo_mov.mes);
-        // Verifica si la fecha es v醠ida seg鷑 las reglas del proyecto[cite: 6457].
+        // Verifica si la fecha es v谩lida seg煤n las reglas del proyecto[cite: 6457].
         if (!((nuevo_mov.mes == 10 && nuevo_mov.dia > 10 && nuevo_mov.dia <= 31) ||
               (nuevo_mov.mes > 10 && nuevo_mov.mes <= 12 && nuevo_mov.dia >= 1 && nuevo_mov.dia <= 31))) {
              printf("Error: La fecha debe ser entre 11/10/2025 y 31/12/2025.\n");
@@ -46,7 +46,7 @@ Movimiento cargarMovimiento(const char* alias_origen_unipago) {
     printf("Ingrese el motivo (puede usar '_' para espacios, max 99 chars): ");
     scanf(" %[^\n]s", nuevo_mov.motivo); // %99s para evitar desbordamiento.
 
-    // Selecci髇 de tipo de operaci髇.
+    // Selecci贸n de tipo de operaci贸n.
     printf("Seleccione el Tipo de Operacion:\n");
     printf("  %d - Debito (Dinero que sale)\n", DEBITO);
     printf("  %d - Credito (Dinero que entra)\n", CREDITO);
@@ -54,7 +54,7 @@ Movimiento cargarMovimiento(const char* alias_origen_unipago) {
     scanf("%d", &opcion_tipo_op);
     nuevo_mov.tipo_operacion = (opcion_tipo_op == CREDITO) ? CREDITO : DEBITO; // Asigna DEBITO por defecto si no es CREDITO.
 
-    // Selecci髇 de tipo de movimiento.
+    // Selecci贸n de tipo de movimiento.
     printf("Seleccione el Tipo de Movimiento:\n");
     printf("  %d - Transferencia\n", TRANSFERENCIA);
     printf("  %d - Pago con QR\n", PAGO_QR);
@@ -62,7 +62,7 @@ Movimiento cargarMovimiento(const char* alias_origen_unipago) {
     printf("  %d - Retiro de Efectivo\n", RETIRA_EFECTIVO);
     printf("Opcion: ");
     scanf("%d", &opcion_tipo_mov);
-    // Asigna el tipo elegido o TRANSFERENCIA por defecto si la opci髇 no es v醠ida.
+    // Asigna el tipo elegido o TRANSFERENCIA por defecto si la opci贸n no es v谩lida.
     switch(opcion_tipo_mov) {
         case PAGO_QR: nuevo_mov.tipo_mov = PAGO_QR; break;
         case PAGO_SERVICIO: nuevo_mov.tipo_mov = PAGO_SERVICIO; break;
@@ -76,7 +76,7 @@ Movimiento cargarMovimiento(const char* alias_origen_unipago) {
 
 // Modifica el motivo (usa puntero y strcpy).
 void modificarMotivo(Movimiento* mov, const char* nuevoMotivo) {
-    // Se usa '->' para acceder al campo a trav閟 del puntero[cite: 5240].
+    // Se usa '->' para acceder al campo a trav茅s del puntero[cite: 5240].
     // strcpy copia la cadena 'nuevoMotivo' en el campo 'motivo' de la estructura apuntada por 'mov'[cite: 392].
     strcpy(mov->motivo, nuevoMotivo);
 }
@@ -91,7 +91,7 @@ void modificarEstado(Movimiento* mov, int nuevoEstado) {
 void mostrarMovimiento(Movimiento mov) {
     // Se recibe 'mov' por valor, ya que solo se lee[cite: 5110].
     printf("ID Movimiento: %ld\n", mov.id_mov); // %ld para long int.
-    printf("  Fecha: %02d/%02d/2025\n", mov.dia, mov.mes); // %02d para mostrar siempre 2 d韌itos (ej: 05).
+    printf("  Fecha: %02d/%02d/2025\n", mov.dia, mov.mes); // %02d para mostrar siempre 2 d铆gitos (ej: 05).
     printf("  Origen: %s\n", mov.cuenta_origen);
     printf("  Destino: %s\n", mov.cuenta_destino);
 
