@@ -1,13 +1,13 @@
 /*
  * Archivo: movimiento.h
  * Define la interfaz del TDA Movimiento, utilizando solo conceptos
- * vistos en la c醫edra de Programaci髇 I - UNSL.
+ * vistos en la c谩tedra de Programaci贸n I - UNSL.
  */
 
 #ifndef MOVIMIENTO_H_INCLUDED
 #define MOVIMIENTO_H_INCLUDED
 
-// --- Definici髇 de Constantes Simb髄icas ---
+// --- Definici贸n de Constantes Simb贸licas ---
 // Usamos #define para representar tipos y estados.
 #define DEBITO 0
 #define CREDITO 1
@@ -20,28 +20,28 @@
 #define OK 20
 #define ANULADO 21
 
-// --- Definici髇 de la Estructura de Datos ---
+// --- Definici贸n de la Estructura de Datos ---
 typedef struct {
-    long int id_mov;            // Identificador 鷑ico (long int es suficiente).
+    long int id_mov;            // Identificador 煤nico (long int es suficiente).
     char cuenta_origen[50];     // CBU/Alias origen.
     char cuenta_destino[50];    // CBU/Alias destino.
     int tipo_operacion;         // Almacena DEBITO o CREDITO.
     int tipo_mov;               // Almacena TRANSFERENCIA, PAGO_QR, etc.
-    double monto;               // Monto de la operaci髇.
+    double monto;               // Monto de la operaci贸n.
     char motivo[100];           // Motivo (modificable).
-    int dia;                    // Fecha (d韆 y mes).
+    int dia;                    // Fecha (d铆a y mes).
     int mes;
     int estado;                 // Almacena OK o ANULADO (modificable).
 } Movimiento;
 
 
 // --- Prototipos de las Operaciones ---
-// Declaraciones de las funciones que se implementar醤 en movimiento.c.
+// Declaraciones de las funciones que se implementar谩n en movimiento.c.
 
-/** @brief Genera un ID 鷑ico para un nuevo movimiento. */
+/** @brief Genera un ID 煤nico para un nuevo movimiento. */
 long int generarNuevoIdMovimiento();
 
-/** @brief Carga datos para un nuevo movimiento pidi閚dolos por teclado.
+/** @brief Carga datos para un nuevo movimiento pidi茅ndolos por teclado.
  * @param alias_origen_unipago El alias de la cuenta UniPago que realiza el movimiento.
  * @return Una variable Movimiento con los datos cargados. */
 Movimiento cargarMovimiento(const char* alias_origen_unipago);
