@@ -2,18 +2,18 @@
  * Archivo: listaVO_Movimiento.h
  * ----------------------------
  * Define la interfaz del TDA ListaMovimientos.
- * Es una lista enlazada din·mica, ordenada por fecha (m·s reciente primero).
+ * Es una lista enlazada din√°mica, ordenada por fecha (m√°s reciente primero).
  */
 
 #ifndef LISTAVO_MOVIMIENTO_H_INCLUDED
 #define LISTAVO_MOVIMIENTO_H_INCLUDED
 
-#include "movimiento.h" // Necesitamos la definiciÛn de 'Movimiento'
+#include "movimiento.h" // Necesitamos la definici√≥n de 'Movimiento'
 
 // --- Estructura del Nodo ---
 typedef struct NodoMovimiento {
     Movimiento datosDelMovimiento;
-    struct NodoMovimiento *siguiente; // Puntero al prÛximo nodo
+    struct NodoMovimiento *siguiente; // Puntero al pr√≥ximo nodo
 } NodoMovimiento;
 
 // --- Estructura de la Lista ---
@@ -24,15 +24,15 @@ typedef struct {
 
 // --- Prototipos de las Operaciones ---
 
-/** @brief Inicializa la lista para que estÈ vacÌa. */
+/** @brief Inicializa la lista para que est√© vac√≠a. */
 void initListaMov(ListaMovimientos *lista);
 
 /** @brief Verifica si la lista no tiene movimientos.
- * @return 1 si est· vacÌa, 0 si tiene al menos uno. */
+ * @return 1 si est√° vac√≠a, 0 si tiene al menos uno. */
 int isEmptyListaMov(ListaMovimientos lista);
 
 /** @brief Inserta un movimiento en la lista manteniendo el orden por fecha
- * (de m·s reciente a m·s antiguo). */
+ * (de m√°s reciente a m√°s antiguo). */
 void insertOrdenadoFecha(ListaMovimientos *lista, Movimiento mov);
 
 /** @brief Muestra todos los movimientos de la lista. */
@@ -42,7 +42,16 @@ void mostrarTodaLaListaMov(ListaMovimientos lista);
  * @return Un puntero al Movimiento si se encuentra, NULL si no. */
 Movimiento* buscarMovimientoPorId(ListaMovimientos lista, long int idBuscado);
 
-// (AquÌ podrÌas agregar m·s prototipos si necesit·s, como eliminar, etc.)
+// (Aqu√≠ podr√≠as agregar m√°s prototipos si necesit√°s, como eliminar, etc.)
+/** @brief Busca un movimiento por ID y cambia su estado a ANULADO.
+ * @return 1 si se anul√≥ con √©xito, 0 si no se encontr√≥ el ID. */
+int anularMovimientoPorId(ListaMovimientos lista, long int idBuscado);
 
+/** @brief Busca un movimiento por ID y modifica su motivo.
+ * @return 1 si se modific√≥ con √©xito, 0 si no se encontr√≥ el ID. */
+int modificarMotivoPorId(ListaMovimientos lista, long int idBuscado, const char* nuevoMotivo);
+
+/** @brief Muestra los √∫ltimos 10 movimientos (o menos si hay menos). */
+void mostrarUltimos10Movimientos(ListaMovimientos lista);
 
 #endif // LISTAVO_MOVIMIENTO_H_INCLUDED
