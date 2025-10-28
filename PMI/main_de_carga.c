@@ -1,20 +1,20 @@
 //#include <stdio.h>
 //#include <string.h> // Para strcpy en la precarga
 //#include "contacto.h"
-//#include "listaE_Contacto.h" // Incluye la lista EST¡TICA de contactos (Pila)
+//#include "listaE_Contacto.h" // Incluye la lista EST√ÅTICA de contactos (Pila)
 //#include "movimiento.h"
-//#include "listaVO_Movimiento.h" // Incluye la lista DIN¡MICA ORDENADA de movimientos
+//#include "listaVO_Movimiento.h" // Incluye la lista DIN√ÅMICA ORDENADA de movimientos
 //
 //// --- Variables Globales para las listas (simplifica el paso a funciones) ---
 //ListaContactosEstatica miAgenda;
 //ListaMovimientos miBilletera;
 //const char* MI_ALIAS_UNIPAGO = "mi.unipago.sl"; // Alias de nuestra billetera
 //
-//// --- FunciÛn de Precarga ---
+//// --- Funci√≥n de Precarga ---
 //void precargarDatos() {
 //    printf("Precargando datos de ejemplo...\n");
 //
-//    // Precarga Contactos (se insertan como Pila: el ˙ltimo insertado queda al tope)
+//    // Precarga Contactos (se insertan como Pila: el √∫ltimo insertado queda al tope)
 //    Contacto c1 = {"Juan_Perez", "juan.perez.alias", BILLETERA_VIRTUAL};
 //    Contacto c2 = {"Maria_Lopez", "0011223344556677889900", CAJA_AHORRO_PESOS};
 //    Contacto c3 = {"Carlos_Garcia", "carlos.garcia.mp", BILLETERA_VIRTUAL};
@@ -36,7 +36,7 @@
 //}
 //
 //
-//// --- FunciÛn Principal ---
+//// --- Funci√≥n Principal ---
 //int main() {
 //    int opcion;
 //    long int id_buscar;
@@ -50,15 +50,15 @@
 //    precargarDatos();
 //
 //    do {
-//        // Mostrar Men˙
+//        // Mostrar Men√∫
 //        printf("\n--- Billetera UniPago --- (Precargado)\n");
 //        printf("1. Mostrar Contactos (Pila)\n");
 //        printf("2. Mostrar Todos los Movimientos (Ordenados)\n");
-//        printf("3. Mostrar ⁄ltimos 10 Movimientos\n");
+//        printf("3. Mostrar √öltimos 10 Movimientos\n");
 //        printf("4. Modificar Motivo de Movimiento por ID\n");
 //        printf("5. Anular Movimiento por ID\n");
 //        printf("0. Salir\n");
-//        printf("Seleccione una opciÛn: ");
+//        printf("Seleccione una opci√≥n: ");
 //        scanf("%d", &opcion);
 //
 //        switch (opcion) {
@@ -95,13 +95,13 @@
 //                printf("Saliendo...\n");
 //                break;
 //            default:
-//                printf("OpciÛn no v·lida.\n");
+//                printf("Opci√≥n no v√°lida.\n");
 //                break;
 //        }
 //    } while (opcion != 0);
 //
-//    // Liberar memoria de la lista din·mica (si tuviÈramos la funciÛn suppress/destroy)
-//    // freeListaMov(&miBilletera); // <-- NecesitarÌas implementar esta funciÛn
+//    // Liberar memoria de la lista din√°mica (si tuvi√©ramos la funci√≥n suppress/destroy)
+//    // freeListaMov(&miBilletera); // <-- Necesitar√≠as implementar esta funci√≥n
 //
 //    return 0;
 //}
