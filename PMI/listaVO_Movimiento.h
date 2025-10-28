@@ -1,12 +1,13 @@
-//Archivo: listaVO_Movimiento.h
-//----------------------------
-//Define la interfaz del TDA ListaMovimientos.
-//Es una lista enlazada dinámica, ordenada por fecha (más reciente primero).
- 
+// Archivo: listaVO_Movimiento.h
+// ----------------------------
+// Define y implementa el TDA ListaMovimientos ordenada por fecha.
+// *** Estructura con implementación en .h según indicación de la cátedra ***
 
 #ifndef LISTAVO_MOVIMIENTO_H_INCLUDED
 #define LISTAVO_MOVIMIENTO_H_INCLUDED
 
+#include <stdio.h>
+#include <stdlib.h> // Para malloc() y free()
 #include "movimiento.h" // Necesitamos la definición de 'Movimiento'
 
 // --- Estructura del Nodo ---
@@ -21,36 +22,128 @@ typedef struct {
 } ListaMovimientos;
 
 
-// --- Prototipos de las Operaciones ---
+// --- IMPLEMENTACIÓN DE FUNCIONES DENTRO DEL .h ---
 
-//  Inicializa la lista para que esté vacía.
-void initListaMov(ListaMovimientos *lista);
+// Inicializa la lista (cabeza a NULL).
+void initListaMov(ListaMovimientos *lista) {
+    lista->cabeza = NULL;
+}
 
-//  Verifica si la lista no tiene movimientos.
-// 1 si está vacía, 0 si tiene al menos uno. 
-int isEmptyListaMov(ListaMovimientos lista);
+// Verifica si la lista está vacía.
+int isEmptyListaMov(ListaMovimientos lista) {
+    return (lista.cabeza == NULL);
+}
 
-//  Inserta un movimiento en la lista manteniendo el orden por fecha
-//  (de más reciente a más antiguo). 
-void insertOrdenadoFecha(ListaMovimientos *lista, Movimiento mov);
+// Función auxiliar: Compara dos fechas (devuelve 1 si mov1 es más reciente o igual).
+int esMasRecienteOIgual(Movimiento mov1, Movimiento mov2) {
+    if (mov1.mes > mov2.mes) {
+        return 1;
+    } else if (mov1.mes == mov2.mes) {
+        return (mov1.dia >= mov2.dia);
+    } else {
+        return 0;
+    }
+}
 
-//  Muestra todos los movimientos de la lista. 
-void mostrarTodaLaListaMov(ListaMovimientos lista);
+// Inserta un movimiento manteniendo el orden: más reciente primero.
+void insertOrdenadoFecha(ListaMovimientos *lista, Movimiento mov) {
+    // 1. Crear nodo y pedir memoria.
+    NodoMovimiento *nuevoNodo = (NodoMovimiento*) malloc(sizeof(NodoMovimiento));
+    if (nuevoNodo == NULL) {
+        printf("Error: No hay memoria disponible para nuevo movimiento en la lista.\n");
+        return;
+    }
+    nuevoNodo->datosDelMovimiento = mov;
+    nuevoNodo->siguiente = NULL;
 
-// Busca un movimiento por su ID.
-// return Un puntero al Movimiento si se encuentra, NULL si no. 
-Movimiento* buscarMovimientoPorId(ListaMovimientos lista, long int idBuscado);
+    // 2. Insertar.
+    // Caso A: Lista vacía o el nuevo es MÁS RECIENTE que el primero actual.
+    if (isEmptyListaMov(*lista) || esMasRecienteOIgual(mov, lista->cabeza->datosDelMovimiento)) {
+        nuevoNodo->siguiente = lista->cabeza;
+        lista->cabeza = nuevoNodo;
+    }
+    // Caso B: Insertar en medio o al final.
+    else {
+        NodoMovimiento *actual = lista->cabeza;
+        // Avanzar 'actual' MIENTRAS el siguiente exista Y el nuevo sea MENOS RECIENTE que el siguiente.
+        while (actual->siguiente != NULL && esMasRecienteOIgual(actual->siguiente->datosDelMovimiento, mov)) {
+            actual = actual->siguiente;
+        }
+        // Enganchar el nuevo nodo después de 'actual'.
+        nuevoNodo->siguiente = actual->siguiente;
+        actual->siguiente = nuevoNodo;
+    }
+}
 
-// (Aquí podrías agregar más prototipos si necesitás, como eliminar, etc.)
-// Busca un movimiento por ID y cambia su estado a ANULADO.
-//   1 si se anuló con éxito, 0 si no se encontró el ID. 
-int anularMovimientoPorId(ListaMovimientos lista, long int idBuscado);
+// Muestra todos los movimientos usando la función del TDA Movimiento.
+void mostrarTodaLaListaMov(ListaMovimientos lista) {
+    NodoMovimiento *actual = lista.cabeza;
+    printf("--- LISTA DE MOVIMIENTOS (Ordenados por fecha desc.) ---\n");
+    if (isEmptyListaMov(lista)) {
+        printf(" (La lista está vacía)\n");
+        return;
+    }
+    while (actual != NULL) {
+        mostrarMovimiento(actual->datosDelMovimiento); // Reutiliza la función del TDA Movimiento.
+        printf("--------------------------\n");
+        actual = actual->siguiente;
+    }
+    printf("--- FIN LISTA ---\n");
+}
 
-//  Busca un movimiento por ID y modifica su motivo.
-//1 si se modificó con éxito, 0 si no se encontró el ID. 
-int modificarMotivoPorId(ListaMovimientos lista, long int idBuscado, const char* nuevoMotivo);
+// Busca un movimiento por ID. Devuelve puntero al Movimiento o NULL.
+Movimiento* buscarMovimientoPorId(ListaMovimientos lista, long int idBuscado) {
+    NodoMovimiento *actual = lista.cabeza;
+    while (actual != NULL) {
+        if (actual->datosDelMovimiento.id_mov == idBuscado) {
+            return &(actual->datosDelMovimiento); // Devuelve dirección del dato dentro del nodo.
+        }
+        actual = actual->siguiente;
+    }
+    return NULL; // No encontrado.
+}
 
-//  Muestra los últimos 10 movimientos (o menos si hay menos). 
-void mostrarUltimos10Movimientos(ListaMovimientos lista);
+// Muestra los últimos 10 movimientos (o menos).
+void mostrarUltimos10Movimientos(ListaMovimientos lista) {
+    NodoMovimiento *actual = lista.cabeza;
+    int contador = 0;
+
+    printf("--- ÚLTIMOS 10 MOVIMIENTOS ---\n");
+    if (isEmptyListaMov(lista)) {
+        printf(" (No hay movimientos)\n");
+        return;
+    }
+    while (actual != NULL && contador < 10) {
+        mostrarMovimiento(actual->datosDelMovimiento);
+        printf("--------------------------\n");
+        actual = actual->siguiente;
+        contador++;
+    }
+    printf("--- FIN ÚLTIMOS 10 ---\n");
+}
+
+// Busca por ID y modifica el motivo. Devuelve 1 si éxito, 0 si no.
+int modificarMotivoPorId(ListaMovimientos lista, long int idBuscado, const char* nuevoMotivo) {
+    Movimiento* movEncontrado = buscarMovimientoPorId(lista, idBuscado);
+    if (movEncontrado != NULL) {
+        modificarMotivo(movEncontrado, nuevoMotivo); // Llama a la función del TDA Movimiento
+        return 1; // Éxito
+    } else {
+        return 0; // No encontrado
+    }
+}
+
+// Busca por ID y anula el movimiento. Devuelve 1 si éxito, 0 si no.
+int anularMovimientoPorId(ListaMovimientos lista, long int idBuscado) {
+    Movimiento* movEncontrado = buscarMovimientoPorId(lista, idBuscado);
+    if (movEncontrado != NULL) {
+        modificarEstado(movEncontrado, ANULADO); // Llama a la función del TDA Movimiento
+        return 1; // Éxito
+    } else {
+        return 0; // No encontrado
+    }
+}
+
+// (Faltaría implementar funciones recursivas y de archivos aquí si las necesitaras en este TDA)
 
 #endif // LISTAVO_MOVIMIENTO_H_INCLUDED
