@@ -1,9 +1,7 @@
-
-/*
- * Archivo: listaVO_Movimiento.c
- * ----------------------------
- * Implementación de las funciones del TDA ListaMovimientos ordenado por fecha.
- */
+// Archivo: listaVO_Movimiento.c
+//  ----------------------------
+//  ImplementaciÃ³n de las funciones del TDA ListaMovimientos ordenado por fecha.
+// 
 
 #include <stdio.h>
 #include <stdlib.h> // Para malloc() y free()
@@ -14,13 +12,13 @@ void initListaMov(ListaMovimientos *lista) {
     lista->cabeza = NULL;
 }
 
-// Verifica si la lista está vacía.
+// Verifica si la lista estÃ¡ vacÃ­a.
 int isEmptyListaMov(ListaMovimientos lista) {
     return (lista.cabeza == NULL);
 }
 
-// Compara dos fechas (devuelve 1 si fecha1 es más reciente o igual que fecha2, 0 si no).
-// Función auxiliar para hacer más legible la inserción.
+// Compara dos fechas (devuelve 1 si fecha1 es mÃ¡s reciente o igual que fecha2, 0 si no).
+// FunciÃ³n auxiliar para hacer mÃ¡s legible la inserciÃ³n.
 int esMasRecienteOIgual(Movimiento mov1, Movimiento mov2) {
     if (mov1.mes > mov2.mes) {
         return 1;
@@ -31,7 +29,7 @@ int esMasRecienteOIgual(Movimiento mov1, Movimiento mov2) {
     }
 }
 
-// Inserta un movimiento manteniendo el orden: más reciente primero.
+// Inserta un movimiento manteniendo el orden: mÃ¡s reciente primero.
 void insertOrdenadoFecha(ListaMovimientos *lista, Movimiento mov) {
     // 1. Crear nodo y pedir memoria.
     NodoMovimiento *nuevoNodo = (NodoMovimiento*) malloc(sizeof(NodoMovimiento));
@@ -43,7 +41,7 @@ void insertOrdenadoFecha(ListaMovimientos *lista, Movimiento mov) {
     nuevoNodo->siguiente = NULL;
 
     // 2. Insertar.
-    // Caso A: Lista vacía o el nuevo es MÁS RECIENTE que el primero actual.
+    // Caso A: Lista vacÃ­a o el nuevo es MÃS RECIENTE que el primero actual.
     if (isEmptyListaMov(*lista) || esMasRecienteOIgual(mov, lista->cabeza->datosDelMovimiento)) {
         nuevoNodo->siguiente = lista->cabeza; // El nuevo apunta al antiguo primero.
         lista->cabeza = nuevoNodo;          // La cabeza ahora apunta al nuevo.
@@ -56,22 +54,22 @@ void insertOrdenadoFecha(ListaMovimientos *lista, Movimiento mov) {
         while (actual->siguiente != NULL && esMasRecienteOIgual(actual->siguiente->datosDelMovimiento, mov)) {
             actual = actual->siguiente;
         }
-        // Enganchar el nuevo nodo después de 'actual'.
+        // Enganchar el nuevo nodo despuÃ©s de 'actual'.
         nuevoNodo->siguiente = actual->siguiente;
         actual->siguiente = nuevoNodo;
     }
 }
 
-// Muestra todos los movimientos usando la función del TDA Movimiento.
+// Muestra todos los movimientos usando la funciÃ³n del TDA Movimiento.
 void mostrarTodaLaListaMov(ListaMovimientos lista) {
     NodoMovimiento *actual = lista.cabeza;
     printf("--- LISTA DE MOVIMIENTOS (Ordenados por fecha desc.) ---\n");
     if (isEmptyListaMov(lista)) {
-        printf(" (La lista está vacía)\n");
+        printf(" (La lista estÃ¡ vacÃ­a)\n");
         return;
     }
     while (actual != NULL) {
-        mostrarMovimiento(actual->datosDelMovimiento); // Reutiliza la función del TDA Movimiento.
+        mostrarMovimiento(actual->datosDelMovimiento); // Reutiliza la funciÃ³n del TDA Movimiento.
         printf("--------------------------\n");
         actual = actual->siguiente;
     }
