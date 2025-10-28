@@ -1,7 +1,5 @@
 // Archivo: listaVO_Movimiento.h
-// ----------------------------
 // Define y implementa el TDA ListaMovimientos ordenada por fecha.
-// *** Estructura con implementación en .h según indicación de la cátedra ***
 
 #ifndef LISTAVO_MOVIMIENTO_H_INCLUDED
 #define LISTAVO_MOVIMIENTO_H_INCLUDED
@@ -10,19 +8,16 @@
 #include <stdlib.h> // Para malloc() y free()
 #include "movimiento.h" // Necesitamos la definición de 'Movimiento'
 
-// --- Estructura del Nodo ---
+//  Estructura del Nodo 
 typedef struct NodoMovimiento {
     Movimiento datosDelMovimiento;
     struct NodoMovimiento *siguiente; // Puntero al próximo nodo
 } NodoMovimiento;
 
-// --- Estructura de la Lista ---
+//  Estructura de la Lista 
 typedef struct {
     NodoMovimiento *cabeza; // Puntero al primer nodo de la lista
 } ListaMovimientos;
-
-
-// --- IMPLEMENTACIÓN DE FUNCIONES DENTRO DEL .h ---
 
 // Inicializa la lista (cabeza a NULL).
 void initListaMov(ListaMovimientos *lista) {
@@ -147,3 +142,4 @@ int anularMovimientoPorId(ListaMovimientos lista, long int idBuscado) {
 // (Faltaría implementar funciones recursivas y de archivos aquí si las necesitaras en este TDA)
 
 #endif // LISTAVO_MOVIMIENTO_H_INCLUDED
+
