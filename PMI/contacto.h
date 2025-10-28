@@ -1,7 +1,5 @@
 // Archivo: contacto.h
-// -------------------
 // Define y implementa el TDA Contacto.
-// *** Estructura con implementación en .h según indicación de la cátedra ***
 
 #ifndef CONTACTO_H_INCLUDED
 #define CONTACTO_H_INCLUDED
@@ -13,16 +11,14 @@
 #define CAJA_AHORRO_PESOS 1
 #define CUENTA_CORRIENTE_PESOS 2
 #define BILLETERA_VIRTUAL 3
-// Puedes añadir más tipos si lo consideras necesario
+// Puedes aÃ±adir mÃ¡s tipos si lo consideras necesario
 
-// --- Definición de la Estructura ---
+// --- DefiniciÃ³n de la Estructura ---
 typedef struct {
     char nombre[50];       // Nombre del contacto
     char cbu_alias[50];    // CBU o Alias
     int tipo_cuenta;       // Guarda una de las constantes de arriba
 } Contacto;
-
-// --- IMPLEMENTACIÓN DE FUNCIONES DENTRO DEL .h ---
 
 // Carga/Modifica el nombre de un contacto.
 void setNombreContacto(Contacto *c, const char* nuevoNombre) {
@@ -34,12 +30,12 @@ void setNombreContacto(Contacto *c, const char* nuevoNombre) {
 void setCbuAliasContacto(Contacto *c, const char* nuevoCbuAlias) {
     int tipo_temp;
     strcpy(c->cbu_alias, nuevoCbuAlias);
-    // Lógica para confirmar el tipo de cuenta al modificar CBU/Alias
-    printf("--> Se modificó el CBU/Alias de %s a %s.\n", c->nombre, nuevoCbuAlias);
+    // LÃ³gica para confirmar el tipo de cuenta al modificar CBU/Alias
+    printf("--> Se modificÃ³ el CBU/Alias de %s a %s.\n", c->nombre, nuevoCbuAlias);
     printf("--> Por favor, confirme/actualice el Tipo de Cuenta (%d: CA $, %d: CC $, %d: Billetera): ",
            CAJA_AHORRO_PESOS, CUENTA_CORRIENTE_PESOS, BILLETERA_VIRTUAL);
     scanf("%d", &tipo_temp);
-    // Reutilizamos la función setTipoCuentaContacto para validar y asignar
+    // Reutilizamos la funciÃ³n setTipoCuentaContacto para validar y asignar
     setTipoCuentaContacto(c, tipo_temp);
 }
 
@@ -51,7 +47,7 @@ void setTipoCuentaContacto(Contacto *c, int nuevoTipoCuenta) {
         nuevoTipoCuenta == BILLETERA_VIRTUAL) {
         c->tipo_cuenta = nuevoTipoCuenta;
     } else {
-        printf("Advertencia: Tipo de cuenta desconocido (%d). Se asignará BILLETERA_VIRTUAL por defecto.\n", nuevoTipoCuenta);
+        printf("Advertencia: Tipo de cuenta desconocido (%d). Se asignarÃ¡ BILLETERA_VIRTUAL por defecto.\n", nuevoTipoCuenta);
         c->tipo_cuenta = BILLETERA_VIRTUAL; // Manejo de error simple
     }
 }
@@ -67,7 +63,7 @@ const char* getCbuAliasContacto(Contacto c) {
     return c.cbu_alias;
 }
 
-// Devuelve el tipo de cuenta del contacto (el número).
+// Devuelve el tipo de cuenta del contacto (el nÃºmero).
 int getTipoCuentaContacto(Contacto c) {
     return c.tipo_cuenta;
 }
@@ -92,19 +88,19 @@ Contacto cargarNuevoContacto() {
     char cbu_alias_temp[50];
     int tipo_temp;
 
-    printf("--- Nuevo Contacto ---\n");
+    printf("  Nuevo Contacto  \n");
     printf("Ingrese Nombre: ");
-    scanf("%49s", nombre_temp);
+    scanf(" %[^\n]", nombre_temp);
     setNombreContacto(&nuevo, nombre_temp); // Usamos el setter
 
     printf("Ingrese CBU/Alias: ");
-    scanf("%49s", cbu_alias_temp);
-    // Asignamos directamente aquí, el tipo se pide después
+    scanf(" %49s", cbu_alias_temp);
+    // Asignamos directamente aquÃ­, el tipo se pide despuÃ©s
     strcpy(nuevo.cbu_alias, cbu_alias_temp);
 
     printf("Ingrese Tipo de Cuenta (%d: CA $, %d: CC $, %d: Billetera): ",
            CAJA_AHORRO_PESOS, CUENTA_CORRIENTE_PESOS, BILLETERA_VIRTUAL);
-    scanf("%d", &tipo_temp);
+    scanf(" %d", &tipo_temp);
     setTipoCuentaContacto(&nuevo, tipo_temp); // Usamos el setter que valida
 
     printf("Contacto cargado.\n\n");
@@ -112,3 +108,4 @@ Contacto cargarNuevoContacto() {
 }
 
 #endif // CONTACTO_H_INCLUDED
+
