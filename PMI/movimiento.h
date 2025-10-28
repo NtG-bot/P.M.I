@@ -1,7 +1,5 @@
 // Archivo: movimiento.h
-// -------------------
 // Define y implementa el TDA Movimiento.
-// *** Estructura con implementación en .h según indicación de la cátedra ***
 
 #ifndef MOVIMIENTO_H_INCLUDED
 #define MOVIMIENTO_H_INCLUDED
@@ -9,7 +7,7 @@
 #include <stdio.h>      // Para printf, scanf
 #include <string.h>     // Para strcpy
 
-// --- Definición de Constantes Simbólicas ---
+//  Definición de Constantes Simbólicas 
 #define DEBITO 0
 #define CREDITO 1
 
@@ -21,7 +19,7 @@
 #define OK 20
 #define ANULADO 21
 
-// --- Definición de la Estructura de Datos ---
+//  Definición de la Estructura de Datos 
 typedef struct {
     long int id_mov;            // Identificador único
     char cuenta_origen[50];     // CBU/Alias origen
@@ -35,8 +33,6 @@ typedef struct {
     int estado;                 // OK o ANULADO (modificable)
 } Movimiento;
 
-// --- IMPLEMENTACIÓN DE FUNCIONES DENTRO DEL .h ---
-
 // Genera IDs únicos usando una variable estática local.
 // ¡OJO! Problema si se incluye en varios .c -> múltiples contadores!
 long int generarNuevoIdMovimiento() {
@@ -49,12 +45,12 @@ Movimiento cargarMovimiento(const char* alias_origen_unipago) {
     Movimiento nuevo_mov;
     int opcion_tipo_op, opcion_tipo_mov;
 
-    // --- Carga automática ---
+    //  Carga automática 
     nuevo_mov.id_mov = generarNuevoIdMovimiento();
     strcpy(nuevo_mov.cuenta_origen, alias_origen_unipago);
     nuevo_mov.estado = OK;
 
-    // --- Petición de datos al usuario ---
+    //  Petición de datos al usuario 
     printf("--- Nuevo Movimiento (ID: %ld) ---\n", nuevo_mov.id_mov);
     printf("Ingrese CBU/Alias de destino: ");
     scanf("%49s", nuevo_mov.cuenta_destino);
@@ -137,3 +133,4 @@ void mostrarMovimiento(Movimiento mov) {
 }
 
 #endif // MOVIMIENTO_H_INCLUDED
+
