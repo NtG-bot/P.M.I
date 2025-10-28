@@ -1,8 +1,7 @@
-/*
- * Archivo: movimiento.h
- * Define la interfaz del TDA Movimiento, utilizando solo conceptos
- * vistos en la cátedra de Programación I - UNSL.
- */
+//  Archivo: movimiento.h
+//  Define la interfaz del TDA Movimiento, utilizando solo conceptos
+// vistos en la cátedra de Programación I - UNSL.
+
 
 #ifndef MOVIMIENTO_H_INCLUDED
 #define MOVIMIENTO_H_INCLUDED
@@ -38,26 +37,26 @@ typedef struct {
 // --- Prototipos de las Operaciones ---
 // Declaraciones de las funciones que se implementarán en movimiento.c.
 
-/** @brief Genera un ID único para un nuevo movimiento. */
+//  Genera un ID único para un nuevo movimiento. 
 long int generarNuevoIdMovimiento();
 
-/** @brief Carga datos para un nuevo movimiento pidiéndolos por teclado.
- * @param alias_origen_unipago El alias de la cuenta UniPago que realiza el movimiento.
- * @return Una variable Movimiento con los datos cargados. */
+//  Carga datos para un nuevo movimiento pidiéndolos por teclado.
+//   alias_origen_unipago El alias de la cuenta UniPago que realiza el movimiento.
+//   Una variable Movimiento con los datos cargados. 
 Movimiento cargarMovimiento(const char* alias_origen_unipago);
 
-/** @brief Modifica el motivo de un movimiento existente.
- * @param mov Puntero al Movimiento a modificar.
- * @param nuevoMotivo El nuevo texto para el motivo. */
+// Modifica el motivo de un movimiento existente.
+//  mov Puntero al Movimiento a modificar.
+//  nuevoMotivo El nuevo texto para el motivo. 
 void modificarMotivo(Movimiento* mov, const char* nuevoMotivo);
 
-/** @brief Modifica el estado de un movimiento existente (OK o ANULADO).
- * @param mov Puntero al Movimiento a modificar.
- * @param nuevoEstado El nuevo estado (usar las constantes OK o ANULADO). */
+//  Modifica el estado de un movimiento existente (OK o ANULADO).
+//  mov Puntero al Movimiento a modificar.
+//   nuevoEstado El nuevo estado (usar las constantes OK o ANULADO). 
 void modificarEstado(Movimiento* mov, int nuevoEstado);
 
-/** @brief Muestra todos los datos de un movimiento en la consola.
- * @param mov El Movimiento a mostrar. */
+//  Muestra todos los datos de un movimiento en la consola.
+//   mov El Movimiento a mostrar. 
 void mostrarMovimiento(Movimiento mov);
 
 
