@@ -1,7 +1,6 @@
-/*
- * Archivo: movimiento.c
- * Implementación de las funciones del TDA Movimiento.
- */
+//Archivo: movimiento.c
+//Implementación de las funciones del TDA Movimiento.
+// 
 
 #include <stdio.h>      // Para printf, scanf.
 #include <string.h>     // Para strcpy (manejo de strings).
@@ -26,12 +25,12 @@ Movimiento cargarMovimiento(const char* alias_origen_unipago) {
     // --- Petición de datos al usuario ---
     printf("--- Nuevo Movimiento (ID: %ld) ---\n", nuevo_mov.id_mov);
     printf("Ingrese CBU/Alias de destino: ");
-    scanf("%49s", nuevo_mov.cuenta_destino); // %49s para evitar desbordamiento del array.
+    scanf("%s", nuevo_mov.cuenta_destino); // %49s para evitar desbordamiento del array.
 
     // Validación de fecha.
     do {
         printf("Ingrese la fecha (dd mm) [ej: 25 10 para 25/Oct]: ");
-        scanf("%d %d", &nuevo_mov.dia, &nuevo_mov.mes);
+        scanf("%d/%d", &nuevo_mov.dia, &nuevo_mov.mes);
         // Verifica si la fecha es válida según las reglas del proyecto[cite: 6457].
         if (!((nuevo_mov.mes == 10 && nuevo_mov.dia > 10 && nuevo_mov.dia <= 31) ||
               (nuevo_mov.mes > 10 && nuevo_mov.mes <= 12 && nuevo_mov.dia >= 1 && nuevo_mov.dia <= 31))) {
