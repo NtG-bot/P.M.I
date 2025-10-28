@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <string.h>
 #include "contacto.h"
-#include "listaE_Contacto.h" // Incluye la lista EST¡TICA de contactos (Pila)
+#include "listaE_Contacto.h" // Incluye la lista EST√ÅTICA de contactos (Pila)
 #include "movimiento.h"
-#include "listaVO_Movimiento.h" // Incluye la lista DIN¡MICA ORDENADA de movimientos
+#include "listaVO_Movimiento.h" // Incluye la lista DIN√ÅMICA ORDENADA de movimientos
 
 // --- Variables Globales ---
 ListaContactosEstatica miAgenda;
 ListaMovimientos miBilletera;
 const char* MI_ALIAS_UNIPAGO = "mi.unipago.sl";
 
-// --- FunciÛn Principal ---
+// --- Funci√≥n Principal ---
 int main() {
     int opcion;
     Contacto nuevo_contacto;
@@ -23,25 +23,25 @@ int main() {
     initListaMov(&miBilletera);
 
     do {
-        // Mostrar Men˙
+        // Mostrar Men√∫
         printf("\n--- Billetera UniPago --- (Interactivo)\n");
         printf("1. Agregar Contacto\n");
         printf("2. Mostrar Contactos (Pila)\n");
         printf("3. Realizar Movimiento\n");
         printf("4. Mostrar Todos los Movimientos (Ordenados)\n");
-        printf("5. Mostrar ⁄ltimos 10 Movimientos\n");
+        printf("5. Mostrar √öltimos 10 Movimientos\n");
         printf("6. Modificar Motivo de Movimiento por ID\n");
         printf("7. Anular Movimiento por ID\n");
         printf("0. Salir\n");
-        printf("Seleccione una opciÛn: ");
+        printf("Seleccione una opci√≥n: ");
         scanf("%d", &opcion);
 
         switch (opcion) {
             case 1:
                 if (isFullListaContactosE(miAgenda)) {
-                    printf("La agenda est· llena.\n");
+                    printf("La agenda est√° llena.\n");
                 } else {
-                    nuevo_contacto = cargarNuevoContacto(); // Llama a la funciÛn de carga
+                    nuevo_contacto = cargarNuevoContacto(); // Llama a la funci√≥n de carga
                     insertContactoE(&miAgenda, nuevo_contacto); // Inserta en la pila
                 }
                 break;
@@ -49,8 +49,8 @@ int main() {
                 mostrarListaContactosE(miAgenda);
                 break;
             case 3:
-                // AquÌ faltarÌa la lÛgica de verificar saldo antes de cargar y guardar
-                nuevo_movimiento = cargarMovimiento(MI_ALIAS_UNIPAGO); // Llama a la funciÛn de carga
+                // Aqu√≠ faltar√≠a la l√≥gica de verificar saldo antes de cargar y guardar
+                nuevo_movimiento = cargarMovimiento(MI_ALIAS_UNIPAGO); // Llama a la funci√≥n de carga
                 insertOrdenadoFecha(&miBilletera, nuevo_movimiento); // Inserta en la lista ordenada
                 break;
             case 4:
@@ -83,13 +83,13 @@ int main() {
                 printf("Saliendo...\n");
                 break;
             default:
-                printf("OpciÛn no v·lida.\n");
+                printf("Opci√≥n no v√°lida.\n");
                 break;
         }
     } while (opcion != 0);
 
-    // Liberar memoria de la lista din·mica
-    // freeListaMov(&miBilletera); // <-- NecesitarÌas implementar esta funciÛn
+    // Liberar memoria de la lista din√°mica
+    // freeListaMov(&miBilletera); // <-- Necesitar√≠as implementar esta funci√≥n
 
     return 0;
 }
