@@ -38,7 +38,7 @@ int isOos_lista_movimiento(Lista_movimiento l){
     return (l.cur == NULL);
 }
 
-Movimiento copy_list_movimiento(Lista_movimiento l){            //request for member 'vipd' in something not structure or union
+Movimiento copy_list_movimiento(Lista_movimiento l){
     return l.cur.vipd;
 }
 

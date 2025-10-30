@@ -21,15 +21,15 @@ void ResetListaEs(Lista_contactos *l){      //envia al cursor al inicio del arre
 }
 
 int IsEmptyListaEs(Lista_contactos l){      //indica si la lista esta vacia
-    return (l.ultimo == -1);
+    return (l->ultimo == -1);
 }
 
 int isFullListaEs(Lista_contactos l){       //indica si la list esta llena
-    return (l.ultimo == MAX - 1);
+    return (l->ultimo == MAX - 1);
 }
 
 int IsOosListaEs(Lista_contactos l){        //indica si el cursor esta fuera de rango
-   return (l.ultimo == l.ultimo + 1);
+   return (l->ultimo == l->ultimo + 1);
 }
 
 Contacto CopyListaEs(Lista_contactos *l){   //devuelve el valor(se usa para mostrar)
@@ -37,16 +37,16 @@ Contacto CopyListaEs(Lista_contactos *l){   //devuelve el valor(se usa para most
 }
 
 void InsertListaEs(Lista_contactos *l, Contacto a){                 //mueve uno hacia la derecha, recuerden que inserta tipo pila, y inserta
-    if( l->ultimo == -1 )
+    if( a->ultimo == -1 )
     {
-        l->ultimo++;
-        l->cur++;
+        a->ultimo++;
+        a->cursor++;
     }
     else
     {
-        l->ultimo++;
+        a->ultimo++;
         int i;
-        for( i = l->ultimo ; i == l->cur ; i-- )
+        for( i = a->ultimo ; i == a->cursor ; i-- )
         {
             l->contactos[i] = l->contactos[ i-1 ] ;
         }

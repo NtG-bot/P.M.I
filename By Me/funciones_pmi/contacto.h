@@ -9,8 +9,6 @@ char alias_cbu[23];
 int tipo_cuenta;
 } Contacto;
 
-//DUDA : COMO HAGO EL SETER SI ACA NO EXISTE LA LISTA, POR ESO ME SALE EL ERROR
-
 void set_alias_cbu(Lista_contactos *l, int aliascbu){           //guarda la info de alias o CBU
     strcpy(l->contactos[l->cur].alias_cbu,aliascbu);
 }
