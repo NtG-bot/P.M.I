@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "string.h"
-#include "malloc.h"
-#include "../contacto.h"
-#include "../listaE_Contacto.h"
-#include "../ListaVO_Movimiento.h"
-#include "../Movimiento.h"
+#include <string.h>
+#include "contacto.h"
+#include "listaE_Contacto.h"
+#include "ListaVO_Movimiento.h"
+#include "Movimiento.h"
 Movimiento cargarMovimiento(char cuentaorigen) {
     Movimiento nuevo_mov;
 
@@ -128,4 +127,5 @@ int main()
 
     return 0;
 }
+
 
