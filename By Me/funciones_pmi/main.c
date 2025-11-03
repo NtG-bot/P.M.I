@@ -6,8 +6,67 @@
 #include "../listaE_Contacto.h"
 #include "../ListaVO_Movimiento.h"
 #include "../Movimiento.h"
+Movimiento cargarMovimiento(char cuentaorigen) {
+    Movimiento nuevo_mov;
 
-//ITEM�s: J, N, B, �, F, G, S.
+    nuevo_mov.id_mov = generador_id_mov();
+
+    strcpy(nuevo_mov.cuenta_origen, cuentaorigen);
+
+    nuevo_mov.estado = OK;
+
+    //  Petición de datos al usuario
+    printf("Nuevo Movimiento (ID: %d) \n", nuevo_mov.id_mov);
+    printf("Ingrese CBU/Alias de destino: ");
+    scanf("%[^\n]", nuevo_mov.cuenta_destino);
+
+    // Validación de fecha.
+    do {
+        printf("Ingrese la fecha (dd mm) [ej: 25 10 para 25/Oct]: ");
+        scanf("%d/%d", &nuevo_mov.dia, &nuevo_mov.mes);
+        if (!((nuevo_mov.mes == 10 && nuevo_mov.dia > 10 && nuevo_mov.dia <= 31) ||
+              (nuevo_mov.mes > 10 && nuevo_mov.mes <= 12 && nuevo_mov.dia >= 1 && nuevo_mov.dia <= 31))) {
+             printf("Error: La fecha debe ser entre 11/10/2025 y 31/12/2025.\n");
+        }
+    } while (!((nuevo_mov.mes == 10 && nuevo_mov.dia > 10 && nuevo_mov.dia <= 31) ||
+               (nuevo_mov.mes > 10 && nuevo_mov.mes <= 12 && nuevo_mov.dia >= 1 && nuevo_mov.dia <= 31)));
+
+    printf("Ingrese el monto:\n ");
+    scanf("%2f", &nuevo_mov.monto);
+
+    printf("Ingrese el motivo (max 100 chars):\n ");
+    scanf("[^\n]", nuevo_mov.motivo);
+
+    // Selección de tipo de operación.
+    printf("Seleccione el Tipo de Operacion:\n");
+    printf(" 1  Debito (Sale)\n", DEBITO);
+    printf(" 2  Credito (Entra)\n", CREDITO);
+    printf("Opcion: ");
+    scanf("%d", &opcion_tipo_op);
+
+    nuevo_mov.tipo_operacion = opcion_tipo_op //1 debito 2 credito
+
+    // Selección de tipo de movimiento.
+    printf("Seleccione el Tipo de Movimiento:\n");
+    printf("  1  Transferencia\n");
+    printf("  2  Pago con QR\n");
+    printf("  3  Pago de Servicio\n" );
+    printf("  4  Retiro de Efectivo\n");
+    printf("Opcion: ");
+    scanf("%d", &opcion_tipo_mov);
+    switch(opcion_tipo_mov) {
+        case 2: nuevo_mov.tipo_mov = 2; break;
+        case 3: nuevo_mov.tipo_mov = 3; break;
+        case 4: nuevo_mov.tipo_mov = 4; break;
+        default: nuevo_mov.tipo_mov = 1; break;
+    }
+
+    printf("Movimiento cargado con exito.\n\n");
+    return nuevo_mov;
+}
+
+
+//ITEM´s: J, N, B, Ñ, F, G, S.
 
 Movimiento lista_movimientos_anulados(Lista_movimiento m){         //Item J : "Listar los movimientos anulados"
     reset_lista_movimiento(m);
@@ -33,7 +92,7 @@ Movimiento busca_movimiento_por_id(Lista_movimiento m){                   //ITEM
     }
 }
 
-void carga_contacto(Lista_contactos *c){                            //ITEM � : "Permite la carga por teclado de UN contacto"
+void carga_contacto(Lista_contactos *c){                            //ITEM Ñ : "Permite la carga por teclado de UN contacto"
     Contacto *aux = (Contacto*)malloc(sizeof(Contacto));
     if (aux == NULL){
         printf("No se pudo asignar memoria\nSaliendo...");
@@ -69,3 +128,4 @@ int main()
 
     return 0;
 }
+
