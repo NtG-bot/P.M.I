@@ -21,7 +21,7 @@ typedef struct
     int estado; //puede ser "ok" o "anulado"(OBLOGATORIO)
 } Movimiento;
 
-int generador_id_mov(Movimiento *a){
+void generador_id_mov(Movimiento *a){
     a->id_mov = a->id_mov + 1;
     return a->id_mov;
 }
@@ -34,7 +34,7 @@ void set_cuenta_origen(Movimiento *a, char cuentaorigen[]){
     strcpy(a->cuenta_origen, cuentaorigen);
 }
 
-char* get_cuenta_origen(Movimiento a){
+char get_cuenta_origen(Movimiento a){
     char *aux = (char*)malloc(sizeof(strlen(a.cuenta_origen) + 1));
     strcpy(aux, a.cuenta_origen);
     return aux;
@@ -44,7 +44,7 @@ void set_cuenta_destino(Movimiento *a, char cuentadestino[]){
     strcpy(a->cuenta_destino, cuentadestino);
 }
 
-char* get_cuenta_destino(Movimiento a){
+char get_cuenta_destino(Movimiento a){
     char *aux = (char*)malloc(sizeof(strlen(a.cuenta_destino) + 1));
     strcpy(aux, a.cuenta_destino);
     return aux;

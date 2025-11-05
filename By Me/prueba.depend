@@ -1,0 +1,28 @@
+# depslib dependency file v1.0
+1762293110 source:c:\users\alleir computers\desktop\programacion\by me\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"contacto.h"
+	"listaE_Contacto.h"
+	"ListaVO_Movimiento.h"
+	"Movimiento.h"
+
+1762292503 c:\users\alleir computers\desktop\programacion\by me\contacto.h
+	"malloc.h"
+	"string.h"
+
+1762292810 c:\users\alleir computers\desktop\programacion\by me\listae_contacto.h
+	<string.h>
+	"malloc.h"
+	"contacto.h"
+
+1762293785 c:\users\alleir computers\desktop\programacion\by me\listavo_movimiento.h
+	"Movimiento.h"
+	"malloc.h"
+	"string.h"
+
+1761686332 c:\users\alleir computers\desktop\programacion\by me\movimiento.h
+	"string.h"
+	"malloc.h"
+

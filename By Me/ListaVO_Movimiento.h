@@ -4,11 +4,10 @@
 #include "malloc.h"
 #include "string.h"
 
-struct nodo{
+typedef struct nodo{
     Movimiento vipd;
     struct nodo *siguiente;
-};
-typedef struct nodo Nodo;
+}Nodo;
 typedef struct{
     Nodo *acc;
     Nodo *cur;
@@ -38,13 +37,26 @@ int isOos_lista_movimiento(Lista_movimiento l){
     return (l.cur == NULL);
 }
 
-Movimiento copy_list_movimiento(Lista_movimiento l){            //request for member 'vipd' in something not structure or union
-    return l.cur.vipd;
+Movimiento copy_list_movimiento(Lista_movimiento l){        //a chekear
+    Movimiento mov;
+    mov = l.cur->vipd;
+    return mov;
 }
 
 void forward_lista_movimiento(Lista_movimiento *l){
     l->aux = l->cur;
     l->cur = l->cur->siguiente;
+}
+
+void insert_lista_movimiento(Lista_movimiento *l){
+    if (isempty_lista_movimiento(l)){
+        l->cur = l->acc;
+        l->aux = l->acc;
+    } else {
+        l->aux = l->cur;
+        l->cur = l->cur->siguiente;
+    }
+
 }
 
 #endif // LISTAVO_MOVIMIENTO_H_INCLUDED

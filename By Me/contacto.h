@@ -9,34 +9,32 @@ char alias_cbu[23];
 int tipo_cuenta;
 } Contacto;
 
-//DUDA : COMO HAGO EL SETER SI ACA NO EXISTE LA LISTA, POR ESO ME SALE EL ERROR
-
-void set_alias_cbu(Lista_contactos *l, int aliascbu){           //guarda la info de alias o CBU
-    strcpy(l->contactos[l->cur].alias_cbu,aliascbu);
+void set_alias_cbu(Contacto *l, int aliascbu){           //guarda la info de alias o CBU
+    strcpy(l->alias_cbu,aliascbu);
 }
 
-char* get_alias_cbu(Lista_contactos l){                  //devuelve la info de alias o CBU, corte copy
-    char *aux = (char*)malloc(sizeof(strlen(l->contactos[l->cur].alias_cbu) + 1));
-    strcpy(aux, l->contactos[l->cur].alias_cbu);
+char* get_alias_cbu(Contacto l){                  //devuelve la info de alias o CBU, corte copy
+    char *aux = (char*)malloc(sizeof(strlen(l.alias_cbu) + 1));
+    strcpy(aux,l.alias_cbu);
     return aux;
 }
 
-void set_nombre(Lista_contactos *l, char nombre[]){             //lo mismo pero con el nombre
-    strcpy(l->contactos[l->cur].nombre, nombre);
+void set_nombre(Contacto *l, char nombre[]){             //lo mismo pero con el nombre
+    strcpy(l->nombre, nombre);
 }
 
-char* get_nombre(Lista_contactos l){                 //devuelve el nombre
-    char *aux = (char*)malloc(sizeof(strlen(l->contactos[l->cur].nombre) + 1));
-    strcpy(aux, l->contactos[l->cur].nombre);
+char* get_nombre(Contacto l){                 //devuelve el nombre
+    char *aux = (char*)malloc(sizeof(strlen(l.nombre) + 1));
+    strcpy(aux, l.nombre);
     return aux;
 }
 
-void set_tipo_cuenta(Lista_contactos *l, int cuenta){               //lo mismo pero con el tipo, recuerden que esta codificado
-    l->contactos[l->cur].tipo_cuenta = cuenta;
+void set_tipo_cuenta(Contacto *l, int cuenta){               //lo mismo pero con el tipo, recuerden que esta codificado
+    l->tipo_cuenta = cuenta;
 }
 
-int get_tipo_cuenta(Lista_contactos l){                    //devuelve tipo de cuenta
-    return l->contactos[l->cur].tipo_cuenta;
+int get_tipo_cuenta(Contacto l){                    //devuelve tipo de cuenta
+    return l.tipo_cuenta;
 }
 
 #endif // CONTACTO_H_INCLUDED

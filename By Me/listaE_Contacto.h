@@ -51,9 +51,9 @@ void InsertListaEs(Lista_contactos *l, Contacto a){                 //mueve uno 
             l->contactos[i] = l->contactos[ i-1 ] ;
         }
     }
-    strcpy(l->contactos[l->cur].nombre, get_nombre(l));
-    strcpy(l->contactos[l->cur].alias_cbu, get_alias_cbu(l));
-    l->contactos[l->cur].tipo_cuenta = get_tipo_cuenta(l);
+    strcpy(l->contactos[l->cur].nombre, a.nombre);
+    strcpy(l->contactos[l->cur].alias_cbu, a.alias_cbu);
+    l->contactos[l->cur].tipo_cuenta = a.tipo_cuenta;
 }
 
 
