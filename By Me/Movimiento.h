@@ -16,8 +16,8 @@ typedef struct
     int tipo_operacion; //debe ser DEBITO(se descuenta $) o CREDITO(se suma $)
     int tipo_mov;   //TRANSF, QR, PAGO SERVICIO O RETIRO
     float monto;    //cantidad de DINERO que MODIFICA el saldo
-    int motivo; //describe el motivo, puede ser VACIO(OBLIGATORIO)
-    Fecha fecha;    //indica la fecha del movimiento, solo se considera mes y dia, no año(se considera como 2025 por DEFECTO)
+    char motivo[101] //describe el motivo, puede ser VACIO(OBLIGATORIO)
+    Fecha fecha;    //indica la fecha del movimiento, solo se considera mes y dia, no aÃ±o(se considera como 2025 por DEFECTO)
     int estado; //puede ser "ok" o "anulado"(OBLOGATORIO)
 } Movimiento;
 
@@ -100,3 +100,4 @@ int get_estado(Movimiento a){
 }
 
 #endif // MOVIMIENTO_H_INCLUDED
+
