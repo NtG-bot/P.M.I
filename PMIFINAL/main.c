@@ -12,19 +12,19 @@
 // --- PENDIENTES ---
 // (a) Realizar Movimiento (Carga, valida saldo, verifica contacto, inserta)
 
-Movimiento cargarMovimiento(char cuentaorigen) {
+Movimiento cargarMovimiento(char *cuentaorigen) {
     Movimiento nuevo_mov;
 
-    nuevo_mov.id_mov = generador_id_mov();
+    int opcion_tipo_op, opcion_tipo_mov;
 
-    strcpy(nuevo_mov.cuenta_origen, cuentaorigen);
-
-    nuevo_mov.estado = OK;
+    set_id_mov(&nuevo_mov, generador_id_mov());
+    set_cuenta_origen(&nuevo_mov, cuentaorigen);
+    set_estado(&nuevo_mov, 1)
 
     //  Petición de datos al usuario
     printf("Nuevo Movimiento (ID: %d) \n", nuevo_mov.id_mov);
     printf("Ingrese CBU/Alias de destino: ");
-    scanf("%[^\n]", nuevo_mov.cuenta_destino);
+    scanf(" %49[^\n]", nuevo_mov.cuenta_destino);
 
     // Validación de fecha.
     do {
@@ -41,16 +41,16 @@ Movimiento cargarMovimiento(char cuentaorigen) {
     scanf("%2f", &nuevo_mov.monto);
 
     printf("Ingrese el motivo (max 100 chars):\n ");
-    scanf("[^\n]", nuevo_mov.motivo);
+    scanf(" %99[^\n]", nuevo_mov.motivo);
 
     // Selección de tipo de operación.
     printf("Seleccione el Tipo de Operacion:\n");
-    printf(" 1  Debito (Sale)\n", DEBITO);
-    printf(" 2  Credito (Entra)\n", CREDITO);
+    printf(" 1  Debito (Sale)\n");
+    printf(" 2  Credito (Entra)\n");
     printf("Opcion: ");
     scanf("%d", &opcion_tipo_op);
 
-    nuevo_mov.tipo_operacion = opcion_tipo_op //1 debito 2 credito
+    set_tipo_operacion(&nuevo_mov, opcion_tipo_op) //1 debito 2 credito
 
     // Selección de tipo de movimiento.
     printf("Seleccione el Tipo de Movimiento:\n");
