@@ -5,67 +5,13 @@
 #include "listaE_Contacto.h"
 #include "ListaVO_Movimiento.h"
 #include "Movimiento.h"
-/*
-Movimiento cargarMovimiento(char cuentaorigen) {
-    Movimiento nuevo_mov;
+// ===================================
+// TAREAS MATI
+// ===================================
+//
+// --- PENDIENTES ---
+// (a) Realizar Movimiento (Carga, valida saldo, verifica contacto, inserta)
 
-    nuevo_mov.id_mov = generador_id_mov();
-
-    strcpy(nuevo_mov.cuenta_origen, cuentaorigen);
-
-    nuevo_mov.estado = OK;
-
-    //  Petici�n de datos al usuario
-    printf("Nuevo Movimiento (ID: %d) \n", nuevo_mov.id_mov);
-    printf("Ingrese CBU/Alias de destino: ");
-    scanf("%[^\n]", nuevo_mov.cuenta_destino);
-
-    // Validaci�n de fecha.
-    do {
-        printf("Ingrese la fecha (dd mm) [ej: 25 10 para 25/Oct]: ");
-        scanf("%d/%d", &nuevo_mov.dia, &nuevo_mov.mes);
-        if (!((nuevo_mov.mes == 10 && nuevo_mov.dia > 10 && nuevo_mov.dia <= 31) ||
-              (nuevo_mov.mes > 10 && nuevo_mov.mes <= 12 && nuevo_mov.dia >= 1 && nuevo_mov.dia <= 31))) {
-             printf("Error: La fecha debe ser entre 11/10/2025 y 31/12/2025.\n");
-        }
-    } while (!((nuevo_mov.mes == 10 && nuevo_mov.dia > 10 && nuevo_mov.dia <= 31) ||
-               (nuevo_mov.mes > 10 && nuevo_mov.mes <= 12 && nuevo_mov.dia >= 1 && nuevo_mov.dia <= 31)));
-
-    printf("Ingrese el monto:\n ");
-    scanf("%2f", &nuevo_mov.monto);
-
-    printf("Ingrese el motivo (max 100 chars):\n ");
-    scanf("[^\n]", nuevo_mov.motivo);
-
-    // Selecci�n de tipo de operaci�n.
-    printf("Seleccione el Tipo de Operacion:\n");
-    printf(" 1  Debito (Sale)\n", DEBITO);
-    printf(" 2  Credito (Entra)\n", CREDITO);
-    printf("Opcion: ");
-    scanf("%d", &opcion_tipo_op);
-
-    nuevo_mov.tipo_operacion = opcion_tipo_op //1 debito 2 credito
-
-    // Selecci�n de tipo de movimiento.
-    printf("Seleccione el Tipo de Movimiento:\n");
-    printf("  1  Transferencia\n");
-    printf("  2  Pago con QR\n");
-    printf("  3  Pago de Servicio\n" );
-    printf("  4  Retiro de Efectivo\n");
-    printf("Opcion: ");
-    scanf("%d", &opcion_tipo_mov);
-    switch(opcion_tipo_mov) {
-        case 2: nuevo_mov.tipo_mov = 2; break;
-        case 3: nuevo_mov.tipo_mov = 3; break;
-        case 4: nuevo_mov.tipo_mov = 4; break;
-        default: nuevo_mov.tipo_mov = 1; break;
-    }
-
-    printf("Movimiento cargado con exito.\n\n");
-    return nuevo_mov;
-}
-*/
-//(a) Realizar Movimiento: Crear un nuevo movimiento pidiendo los datos por teclado (destino, monto, fecha, etc.), validando la fecha, agregarlo a la lista ordenada de movimientos y, si el destinatario no es un contacto guardado, preguntar si se quiere agendar 1.
 Movimiento cargarMovimiento(char cuentaorigen) {
     Movimiento nuevo_mov;
 
@@ -121,18 +67,38 @@ Movimiento cargarMovimiento(char cuentaorigen) {
         default: nuevo_mov.tipo_mov = 1; break;
     }
 
+
+
     printf("Movimiento cargado con exito.\n\n");
     return nuevo_mov;
 }
 
+// (c) Mostrar Movimiento Buscado (Pide ID, llama a 'buscar' y 'mostrar')
+void funcion_mostrarMovimientoBuscado() {
+    long int id_b;
+    printf("Ingrese ID del movimiento a buscar: ");
+    scanf("%ld", &id_b);
 
-//(c) Mostrar Movimiento Buscado: Mostrar en pantalla todos los detalles de un movimiento que previamente se buscó usando su id_mov2.
+    Movimiento* mov_b = buscarMovimientoPorId(miBilletera, id_b); // Llama al TDA
 
+    if (mov_b != NULL) {
+        printf("--- Movimiento Encontrado ---\n");
+        // Usamos Getters del TDA para mostrar
+        printf("ID Movimiento: %ld\n", get_id_mov(*mov_b));
+        printf("  Fecha: %02d/%02d/2025\n", get_fecha_dia(*mov_b), get_fecha_mes(*mov_b));
+        // (No hacemos get_cuenta_origen/destino/motivo porque devuelven mallocs)
+        // (Es más seguro acceder directo al struct devuelto por el puntero)
+        printf("  Origen: %s\n", mov_b->cuenta_origen);
+        printf("  Destino: %s\n", mov_b->cuenta_destino);
+        printf("  Monto: %.2f\n", get_monto(*mov_b));
+        printf("  Motivo: %s\n", mov_b->motivo);
+        printf("  Estado: %d\n", get_estado(*mov_b));
+    } else {
+        printf("Error: Movimiento con ID %ld no encontrado.\n", id_b);
+    }
+}
 
-
-//(m) Contar Movimientos a Contacto (Recursivo): Contar cuántas transacciones se hicieron hacia un CBU/Alias específico. Esta función debe ser implementada usando recursividad3.
-
-// --- TAREA (m): Contar Movimientos a Contacto (Recursiva) ---
+// (m) Contar Movs a Contacto (Recursivo)
 
 // Esta es la función recursiva interna
 int contarMovimientosRecursivo(Nodo *nodo_actual, const char* cbu_alias_buscado) {
@@ -158,9 +124,8 @@ int contarMovimientosAContacto(Lista_movimiento lista, const char* cbu_alias_bus
     return contarMovimientosRecursivo(lista.acc, cbu_alias_buscado);
 }
 
-//(r) Calcular Monto Mes: Calcular la suma total de dinero que ingresó (créditos) y la suma total que salió (débitos) durante un mes específico ingresado por el usuario4.
+// (r) Calcular Monto (Ingresado/Debitado) por Mes
 
-// --- TAREA (r): Calcular Monto Mes ---
 void calcularMontosPorMes(Lista_movimiento lista, int mes_buscado, double *total_debito, double *total_credito) {
     *total_debito = 0.0; // Inicializamos los punteros a 0
     *total_credito = 0.0;
@@ -181,13 +146,12 @@ void calcularMontosPorMes(Lista_movimiento lista, int mes_buscado, double *total
     }
 }
 
-//(d) Ingresar/Retirar Dinero: Permitir sumar dinero al saldo de la billetera (ingreso) o restarle dinero (retiro de efectivo), registrando la operación como un movimiento5.
+// (d) Ingresar o Retirar Dinero (Actualiza saldo, crea movimiento)
 
 
 
-//(k) Eliminar Movimientos Anulados: Buscar todos los movimientos que estén marcados como "anulados", guardarlos en un archivo de texto llamado anulados.txt, pedir confirmación al usuario y, si confirma, borrarlos definitivamente de la lista de movimientos 6.
+// (k) Eliminar Movs Anulados (Guarda en .txt, pide confirmación, elimina)
 
-// --- TAREA (k): Eliminar Movimientos Anulados ---
 void eliminarAnuladosYGuardar(Lista_movimiento *lista) {
     FILE *archivo = fopen("anulados.txt", "w");
     if (archivo == NULL) {
@@ -231,9 +195,34 @@ void eliminarAnuladosYGuardar(Lista_movimiento *lista) {
     printf("Se guardaron y eliminaron %d movimientos anulados.\n", contador);
 }
 
-//(h) Modificar Motivo por Nombre de Contacto: Buscar movimientos que se hayan hecho a un contacto específico (buscando por el nombre del contacto), y permitir al usuario cambiar el campo motivo de esos movimientos7.
+// (h) Modificar Motivo por Nombre de Contacto (Busca contacto -> Busca movs)
 
-//ITEM�s: J (hecho), N, B(hecho), �(hecho), F, G(hecho), S.
+
+
+// ===================================
+// TAREAS AXEL
+// ===================================
+//
+// --- PENDIENTES ---
+// (n) Descargar Movs a historicos.txt (Pide fechas, recorre lista, guarda en .txt)
+
+void descarga_movimientos_historicos(Lista_movimiento *m){          //Item N : "Descarga movimientos desde un archivo, e informa la cantidad de movimientos copiados por pantalla"
+
+}
+
+// (f) Mostrar Movimientos Históricos (Recorre y muestra toda la lista)
+
+Movimiento muestra_movimientos_historicos(Lista_movimiento m){      //ITEM F : "Muestra movimientos historicos, ordenados del mas actual, al mas antiguo"
+
+}
+
+// (s) Precarga Automática de 10 Movimientos
+
+
+
+
+// --- HECHAS ---
+// (j) Listar los movimientos anulados
 
 void lista_movimientos_anulados(Lista_movimiento m){         //Item J : "Listar los movimientos anulados"
     Movimiento aux;
@@ -249,9 +238,7 @@ void lista_movimientos_anulados(Lista_movimiento m){         //Item J : "Listar 
     }while(!isOos_lista_movimiento(m));
 }
 
-void descarga_movimientos_historicos(Lista_movimiento *m){          //Item N : "Descarga movimientos desde un archivo, e informa la cantidad de movimientos copiados por pantalla"
-
-}
+// (b) Buscar un movimiento por id_mov (Función interna)
 
 int busca_movimiento_por_id(Lista_movimiento *m,int id){                   //ITEM B : "Busca un movimiento por id, no figura en menu y tampoco muestra"
     Movimiento aux;
@@ -268,7 +255,9 @@ int busca_movimiento_por_id(Lista_movimiento *m,int id){                   //ITE
     return 0;
 }
 
-void carga_contacto(Lista_contactos *c){                            //ITEM � : "Permite la carga por teclado de UN contacto"
+// (ñ) Cargar un contacto por teclado
+
+void carga_contacto(Lista_contactos *c){                            //ITEM  : "Permite la carga por teclado de UN contacto"
     Contacto *aux = (Contacto*)malloc(sizeof(Contacto));
     if (aux == NULL){
         printf("No se pudo asignar memoria\nSaliendo...");
@@ -289,9 +278,7 @@ void carga_contacto(Lista_contactos *c){                            //ITEM � :
     }
 }
 
-Movimiento muestra_movimientos_historicos(Lista_movimiento m){      //ITEM F : "Muestra movimientos historicos, ordenados del mas actual, al mas antiguo"
-
-}
+// (g) Modificar el motivo por id_mov
 
 void modifica_motivo_por_id(Lista_movimiento *m, int id, int motivo){                   //ITEM G : "modifica el motivo de un movimiento por id"
     int nuevo_id;
@@ -306,9 +293,58 @@ void modifica_motivo_por_id(Lista_movimiento *m, int id, int motivo){           
     }
 }
 
+
+// ===================================
+// TAREAS PILAR
+// ===================================
+//
+// --- PENDIENTES ---
+// (i) Anular Movimiento por ID (Busca por ID y usa set_estado)
+
+
+
+// (q) Mostrar Todos los Contactos (Recorre la lista estática y muestra)
+
+
+
+// (p) Precarga Automática de 5 Contactos
+
+
+
+// (l) Mostrar Movs > 350k (Recursivo)
+
+void mostrar_mayores_A_350mil(Lista lista) {
+    if (lista == NULL)
+        return;
+
+    /* Si el movimiento supera los 350 mil, lo muestro*/
+    if (lista->dato.monto > 350000) {
+        printf("Datos:\n");
+        printf("ID Movimiento: %d\n", lista->dato.id_mov);
+        printf("Cuenta origen: %s\n", lista->dato.cuenta_origen);
+        printf("Cuenta destino: %s\n", lista->dato.cuenta_destino);
+        printf("Monto: %.2f\n", lista->dato.monto);
+        printf("Tipo operacion: %s\n", lista->dato.tipo_operacion);
+        printf("Estado: %s\n", lista->dato.estado);
+    }
+    mostrar_mayores_A_350mil(lista->sig); /*recursion*/
+}
+
+
+// (o) Eliminar un Contacto (Pide nombre/alias, busca y llama a SupressListaEs)
+
+
+
+// (s) Precarga Automática de 10 Movimientos (Duplicada con Axel, coordinen)
+
+
+
+
 int main()
 {
     Lista_contactos contactos;
     Lista_movimiento movimientos;
+
+
     return 0;
 }

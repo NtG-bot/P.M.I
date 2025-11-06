@@ -1,77 +1,103 @@
+// Archivo: Movimiento.h
+// -------------------
+// TDA Movimiento (Puro, sin printf/scanf)
+
 #ifndef MOVIMIENTO_H_INCLUDED
 #define MOVIMIENTO_H_INCLUDED
-#include "string.h"
-#include "malloc.h"
-typedef struct{
+
+#include <string.h>
+#include <stdlib.h> // Para malloc, NULL
+#include <stdio.h>  // Para NULL
+
+// --- Estructuras ---
+typedef struct
+{
     int dia;
     int mes;
-    int anio;
 } Fecha;
 
 typedef struct
 {
-    int id_mov; //no se repite
-    char cuenta_origen[23]; //alias o CBU
-    char cuenta_destino[23];    //alias o CBU
-    int tipo_operacion; //debe ser DEBITO(se descuenta $) o CREDITO(se suma $)
-    int tipo_mov;   //TRANSF, QR, PAGO SERVICIO O RETIRO
-    float monto;    //cantidad de DINERO que MODIFICA el saldo
-    int motivo; //describe el motivo, puede ser VACIO(OBLIGATORIO)
-    Fecha fecha;    //indica la fecha del movimiento, solo se considera mes y dia, no a�o(se considera como 2025 por DEFECTO)
-    int estado; //puede ser "ok" o "anulado"(OBLOGATORIO)
+    long int id_mov;
+    char cuenta_origen[50];
+    char cuenta_destino[50];
+    int tipo_operacion; // 1:Debito, 2:Credito
+    int tipo_mov;       // 1:Transf, 2:QR, 3:Servicio, 4:Retiro
+    float monto;
+    char motivo[100];   // CORREGIDO: char[]
+    Fecha fecha;
+    int estado; // 1:OK, 2:Anulado
 } Movimiento;
 
-void generador_id_mov(Movimiento *a){
-    a->id_mov = a->id_mov + 1;
-    return a->id_mov;
+// --- Implementación de Funciones TDA ---
+
+// Generador de ID CORREGIDO
+long int generador_id_mov(){
+    int proximo_id = 1;
+    return proximo_id++;
 }
 
-int get_id_mov(Movimiento a){
+void set_id_mov(Movimiento *a, long int nuevo_id){
+    a->id_mov = nuevo_id;
+}
+
+long int get_id_mov(Movimiento a){
     return a.id_mov;
 }
 
-void set_cuenta_origen(Movimiento *a, char cuentaorigen[]){
+void set_cuenta_origen(Movimiento *a, const char cuentaorigen[]){
     strcpy(a->cuenta_origen, cuentaorigen);
 }
 
 char* get_cuenta_origen(Movimiento a){
-    char *aux = (char*)malloc(sizeof(strlen(a.cuenta_origen) + 1));
-    strcpy(aux, a.cuenta_origen);
+    char *aux = (char*)malloc(strlen(a.cuenta_origen) + 1); // CORREGIDO
+    if (aux != NULL) strcpy(aux, a.cuenta_origen);
     return aux;
 }
 
-void set_cuenta_destino(Movimiento *a, char cuentadestino[]){
+void set_cuenta_destino(Movimiento *a, const char cuentadestino[]){
     strcpy(a->cuenta_destino, cuentadestino);
 }
 
 char* get_cuenta_destino(Movimiento a){
-    char *aux = (char*)malloc(sizeof(strlen(a.cuenta_destino) + 1));
-    strcpy(aux, a.cuenta_destino);
+    char *aux = (char*)malloc(strlen(a.cuenta_destino) + 1); // CORREGIDO
+    if (aux != NULL) strcpy(aux, a.cuenta_destino);
     return aux;
 }
 
-void set_tipo_operacion(Movimiento *a, int tipomovimiento){
-    a->tipo_mov = tipomovimiento;
+void set_tipo_operacion(Movimiento *a, int tipooperacion){
+    a->tipo_operacion = tipooperacion; // CORREGIDO
 }
 
 int get_tipo_operacion(Movimiento a){
     return a.tipo_operacion;
 }
 
-void set_monto(Movimiento *a, float monto){
+void set_tipo_mov(Movimiento *a, int tipomov){
+    a->tipo_mov = tipomov;
+}
+
+int get_tipo_mov(Movimiento a){
+    return a.tipo_mov;
+}
+
+void set_monto(Movimiento *a, double monto){
     a->monto = monto;
 }
 
-float get_monto(Movimiento a){
+double get_monto(Movimiento a){
     return a.monto;
 }
 
-void set_motivo(Movimiento *a, int nuevo_motivo){
-    a->motivo = nuevo_motivo;
+// CORREGIDO: 'motivo' es un string
+void set_motivo(Movimiento *a, const char nuevo_motivo[]){
+    strcpy(a->motivo, nuevo_motivo);
 }
 
-int get_motivo(Movimiento a){
-    return a.motivo;
+char* get_motivo(Movimiento a){
+    char *aux = (char*)malloc(strlen(a.motivo) + 1); // CORREGIDO
+    if (aux != NULL) strcpy(aux, a.motivo);
+    return aux;
 }
 
 void set_fecha_dia(Movimiento *a, int dia){
@@ -90,8 +116,7 @@ int get_fecha_mes(Movimiento a){
     return a.fecha.mes;
 }
 
-void set_estado(Movimiento *a, int nuevo_estado)
-{
+void set_estado(Movimiento *a, int nuevo_estado){
     a->estado = nuevo_estado;
 }
 

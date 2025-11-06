@@ -1,77 +1,104 @@
+// Archivo: listaE_Contacto.h
+// --------------------------
+// TDA Lista Estática de Contactos (Lógica Híbrida PMI, Puro)
+
 #ifndef LISTAE_CONTACTO_H_INCLUDED
 #define LISTAE_CONTACTO_H_INCLUDED
-#include <string.h>
-#include "malloc.h"
-#include "contacto.h"
-#define MAX 3
 
+#include <stdio.h>    // Para NULL
+#include <string.h>   // Para strcmp
+#include "contacto.h" // Necesita la struct Contacto
+
+#define MAX_CONTACTOS 100 // Constante de tamaño
+
+// ESTRUCTURA CORREGIDA
 typedef struct{
-Contacto contactos[MAX];
-int cur;
-int ultimo;
+    Contacto arrayContactos[MAX_CONTACTOS]; // Un ARREGLO
+    int ultimo; // Índice del último elemento (-1 si está vacía)
+    int cur;    // Índice del cursor (para ops de lista)
 } Lista_contactos;
 
-void InitListaEs(Lista_contactos *l){       //da valores "por defecto" a las variables
-    l->cur = -1;
+// --- IMPLEMENTACIÓN DE FUNCIONES EN .h ---
+
+void InitListaEs(Lista_contactos *l){
     l->ultimo = -1;
+    l->cur = -1;
 }
 
-void ResetListaEs(Lista_contactos *l){      //envia al cursor al inicio del arreglo(en este caso)
-    l->cur = 0;
+int IsEmptyListaEs(Lista_contactos l){
+    return (l.ultimo == -1); // CORREGIDO
 }
 
-int IsEmptyListaEs(Lista_contactos l){      //indica si la lista esta vacia
-    return (l.ultimo == -1);
+int isFullListaEs(Lista_contactos l){
+    return (l.ultimo == MAX_CONTACTOS - 1); // CORREGIDO
 }
 
-int isFullListaEs(Lista_contactos l){       //indica si la list esta llena
-    return (l.ultimo == MAX - 1);
+int IsOosListaEs(Lista_contactos l){
+    return (l->cur < 0 || l->cur > l->ultimo); // CORREGIDO
 }
 
-int IsOosListaEs(Lista_contactos l){        //indica si el cursor esta fuera de rango
-   return (l.ultimo == l.ultimo + 1);
+void ResetListaEs(Lista_contactos *l){
+    if (IsEmptyListaEs(*l)) {
+        l->cur = -1;
+    } else {
+        l->cur = 0; // Cursor al primer elemento
+    }
 }
 
-Contacto CopyListaEs(Lista_contactos *l){   //devuelve el valor(se usa para mostrar)
-    return l->contactos[l->cur];
-}
-
-void InsertListaEs(Lista_contactos *l, Contacto a){                 //mueve uno hacia la derecha, recuerden que inserta tipo pila, y inserta
-    if( l->ultimo == -1 )
-    {
-        l->ultimo++;
+void ForwardsListaEs(Lista_contactos *l){
+    if (l->cur < l->ultimo) {
         l->cur++;
+    } else {
+        l->cur = -1; // Se fue "Out of Structure"
     }
-    else
-    {
-        l->ultimo++;
-        int i;
-        for( i = l->ultimo ; i == l->cur ; i-- )
-        {
-            l->contactos[i] = l->contactos[ i-1 ] ;
-        }
-    }
-    strcpy(l->contactos[l->cur].nombre,get_nombre(a));
-    strcpy(l->contactos[l->cur].alias_cbu, get_alias_cbu(a));
-    l->contactos[l->cur].tipo_cuenta = get_tipo_cuenta(a);
-
 }
 
-
-void ForwardsListaEs(Lista_contactos *l){     //mueve el cursor al siguiente
-    l->cur++;
+Contacto CopyListaEs(Lista_contactos l){
+    // (Asumimos que !IsOosListaEs(l) se chequeó en main)
+    return l.arrayContactos[l.cur];
 }
 
-void SupressListaEs(Lista_contactos *l)      //elimina el elemento donde esta el cursor (hay que laburarlo)
-{
+[cite_start]// INSERCIÓN TIPO PILA (PMI Punto D) [cite: 3466-3468]
+// Inserta al final, ignora el cursor 'cur'.
+void InsertListaEs(Lista_contactos *l, Contacto a){
+    if (isFullListaEs(*l)) {
+        return; // Error, lista llena (TDA mudo)
+    }
+    l->ultimo++;
+    l->arrayContactos[l->ultimo] = a;
+    l->cur = l->ultimo;
+}
+
+// SUPPRESS TIPO LISTA (PMI Punto D)
+// Elimina en la posición del cursor 'cur' y desplaza.
+void SupressListaEs(Lista_contactos *l){
+    if (IsEmptyListaEs(*l) || IsOosListaEs(*l)) {
+        return; // No se puede suprimir
+    }
+
     int i;
-    for( i = l->ultimo ; i == l->cur ; i-- )
-    {
-        l->contactos[ i ] = l->contactos[ i - 1 ] ;
+    for(i = l->cur; i < l->ultimo; i++){
+        l->arrayContactos[i] = l->arrayContactos[i + 1];
     }
     l->ultimo--;
+
+    if (l->cur > l->ultimo && !IsEmptyListaEs(*l)) {
+        l->cur = l->ultimo;
+    } else if (IsEmptyListaEs(*l)) {
+        InitListaEs(l);
+    }
 }
 
-
+// Función de Búsqueda (necesaria para el main)
+// Devuelve un puntero al contacto si lo encuentra, o NULL
+Contacto* buscarContactoPorAlias(Lista_contactos *l, const char* alias_cbu) {
+    int i;
+    for (i = 0; i <= l->ultimo; i++) {
+        if (strcmp(l->arrayContactos[i].alias_cbu, alias_cbu) == 0) {
+            return &(l->arrayContactos[i]); // Devuelve la dirección
+        }
+    }
+    return NULL; // No se encontró
+}
 
 #endif // LISTAE_CONTACTO_H_INCLUDED
