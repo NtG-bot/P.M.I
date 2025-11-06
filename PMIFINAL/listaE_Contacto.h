@@ -34,7 +34,7 @@ int isFullListaEs(Lista_contactos l){
 }
 
 int IsOosListaEs(Lista_contactos l){
-    return (l->cur < 0 || l->cur > l->ultimo); // CORREGIDO
+    return ((l.cur < 0) || (l.cur > l.ultimo)); // CORREGIDO
 }
 
 void ResetListaEs(Lista_contactos *l){
@@ -58,7 +58,7 @@ Contacto CopyListaEs(Lista_contactos l){
     return l.arrayContactos[l.cur];
 }
 
-[cite_start]// INSERCIÓN TIPO PILA (PMI Punto D) [cite: 3466-3468]
+// INSERCIÓN TIPO PILA (PMI Punto D) [cite: 3466-3468]
 // Inserta al final, ignora el cursor 'cur'.
 void InsertListaEs(Lista_contactos *l, Contacto a){
     if (isFullListaEs(*l)) {

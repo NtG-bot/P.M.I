@@ -84,7 +84,7 @@ int esMasRecienteOIgual(Movimiento mov1, Movimiento mov2) {
     return 0;
 }
 
-[cite_start]// (Punto A) Inserta ordenado por fecha [cite: 3463-3465]
+// (Punto A) Inserta ordenado por fecha [cite: 3463-3465]
 void insertOrdenadoFecha(Lista_movimiento *lista, Movimiento mov) {
     Nodo *nuevoNodo = (Nodo*) malloc(sizeof(Nodo));
     if (nuevoNodo == NULL) { return; } // Error de memoria

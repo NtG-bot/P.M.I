@@ -19,7 +19,7 @@ Movimiento cargarMovimiento(char *cuentaorigen) {
 
     set_id_mov(&nuevo_mov, generador_id_mov());
     set_cuenta_origen(&nuevo_mov, cuentaorigen);
-    set_estado(&nuevo_mov, 1)
+    set_estado(&nuevo_mov, 1);
 
     //  Petición de datos al usuario
     printf("Nuevo Movimiento (ID: %d) \n", nuevo_mov.id_mov);
@@ -29,13 +29,13 @@ Movimiento cargarMovimiento(char *cuentaorigen) {
     // Validación de fecha.
     do {
         printf("Ingrese la fecha (dd mm) [ej: 25 10 para 25/Oct]: ");
-        scanf("%d/%d", &nuevo_mov.dia, &nuevo_mov.mes);
-        if (!((nuevo_mov.mes == 10 && nuevo_mov.dia > 10 && nuevo_mov.dia <= 31) ||
-              (nuevo_mov.mes > 10 && nuevo_mov.mes <= 12 && nuevo_mov.dia >= 1 && nuevo_mov.dia <= 31))) {
+        scanf("%d/%d", &nuevo_mov.fecha.dia, &nuevo_mov.fecha.mes);
+        if (!((nuevo_mov.fecha.mes == 10 && nuevo_mov.fecha.dia > 10 && nuevo_mov.fecha.dia <= 31) ||
+              (nuevo_mov.fecha.mes > 10 && nuevo_mov.fecha.mes <= 12 && nuevo_mov.fecha.dia >= 1 && nuevo_mov.fecha.dia <= 31))) {
              printf("Error: La fecha debe ser entre 11/10/2025 y 31/12/2025.\n");
         }
-    } while (!((nuevo_mov.mes == 10 && nuevo_mov.dia > 10 && nuevo_mov.dia <= 31) ||
-               (nuevo_mov.mes > 10 && nuevo_mov.mes <= 12 && nuevo_mov.dia >= 1 && nuevo_mov.dia <= 31)));
+    } while (!((nuevo_mov.fecha.mes == 10 && nuevo_mov.fecha.dia > 10 && nuevo_mov.fecha.dia <= 31) ||
+               (nuevo_mov.fecha.mes > 10 && nuevo_mov.fecha.mes <= 12 && nuevo_mov.fecha.dia >= 1 && nuevo_mov.fecha.dia <= 31)));
 
     printf("Ingrese el monto:\n ");
     scanf("%2f", &nuevo_mov.monto);
@@ -60,13 +60,10 @@ Movimiento cargarMovimiento(char *cuentaorigen) {
     printf("  4  Retiro de Efectivo\n");
     printf("Opcion: ");
     scanf("%d", &opcion_tipo_mov);
-    switch(opcion_tipo_mov) {
-        case 2: nuevo_mov.tipo_mov = 2; break;
-        case 3: nuevo_mov.tipo_mov = 3; break;
-        case 4: nuevo_mov.tipo_mov = 4; break;
-        default: nuevo_mov.tipo_mov = 1; break;
+   if (opcion_tipo_mov < 1 || opcion_tipo_mov > 4) {
+        opcion_tipo_mov = 1;
     }
-
+    set_tipo_mov(&nuevo_mov, opcion_tipo_mov);
 
 
     printf("Movimiento cargado con exito.\n\n");
@@ -74,81 +71,159 @@ Movimiento cargarMovimiento(char *cuentaorigen) {
 }
 
 // (c) Mostrar Movimiento Buscado (Pide ID, llama a 'buscar' y 'mostrar')
+// (Esta función va en main.c, junto con funcion_cargarMovimiento)
+
+// --- TAREA (c): Mostrar Movimiento Buscado ---
 void funcion_mostrarMovimientoBuscado() {
-    long int id_b;
-    printf("Ingrese ID del movimiento a buscar: ");
-    scanf("%ld", &id_b);
+int id_a_buscar;
+Movimiento* mov_encontrado; // Un puntero para guardar el resultado
 
-    Movimiento* mov_b = buscarMovimientoPorId(miBilletera, id_b); // Llama al TDA
+    printf("Buscar y Mostrar Movimiento\n");
+    printf("Ingrese el ID del movimiento que desea ver: ");
+    scanf("%d", &id_a_buscar);
 
-    if (mov_b != NULL) {
-        printf("--- Movimiento Encontrado ---\n");
-        // Usamos Getters del TDA para mostrar
-        printf("ID Movimiento: %ld\n", get_id_mov(*mov_b));
-        printf("  Fecha: %02d/%02d/2025\n", get_fecha_dia(*mov_b), get_fecha_mes(*mov_b));
-        // (No hacemos get_cuenta_origen/destino/motivo porque devuelven mallocs)
-        // (Es más seguro acceder directo al struct devuelto por el puntero)
-        printf("  Origen: %s\n", mov_b->cuenta_origen);
-        printf("  Destino: %s\n", mov_b->cuenta_destino);
-        printf("  Monto: %.2f\n", get_monto(*mov_b));
-        printf("  Motivo: %s\n", mov_b->motivo);
-        printf("  Estado: %d\n", get_estado(*mov_b));
+    mov_encontrado = buscarMovimientoPorId(miBilletera, id_a_buscar);
+
+    if (mov_encontrado != NULL) {
+        printf("\n--- Movimiento Encontrado (ID: %d) ---\n", id_a_buscar);
+        printf("  Fecha: %d/%d/2025\n", get_fecha_dia(*mov_encontrado), get_fecha_mes(*mov_encontrado));
+        printf("  Origen: %s\n", mov_encontrado->cuenta_origen);
+        printf("  Destino: %s\n", mov_encontrado->cuenta_destino);
+        printf("  Motivo: %s\n", mov_encontrado->motivo);
+
+        if (get_tipo_operacion(*mov_encontrado) == 1) { // 1 = DEBITO
+            printf("  Tipo: DEBITO\n");
+            printf("  Monto: -$%f\n", get_monto(*mov_encontrado));
+        } else { // 2 = CREDITO
+            printf("  Tipo: CREDITO\n");
+            printf("  Monto: +$%f\n", get_monto(*mov_encontrado));
+        }
+
+        if (get_estado(*mov_encontrado) == 1) { // 1 = OK
+            printf("  Estado: OK\n");
+        } else { // 2 = ANULADO
+            printf("  Estado: ANULADO\n");
+        }
+
     } else {
-        printf("Error: Movimiento con ID %ld no encontrado.\n", id_b);
+        printf("No se encontro ningun movimiento con el ID %d.\n", id_a_buscar);
     }
 }
 
 // (m) Contar Movs a Contacto (Recursivo)
 
-// Esta es la función recursiva interna
-int contarMovimientosRecursivo(Nodo *nodo_actual, const char* cbu_alias_buscado) {
-    // Caso Base: Se terminó la lista
+
+int funcion_contarRecursivo(Nodo *nodo_actual,char* cbu_alias_buscado) {
     if (nodo_actual == NULL) {
         return 0;
     }
+    int contador_resto = funcion_contarRecursivo(nodo_actual->siguiente, cbu_alias_buscado);
 
-    // Llamada recursiva: Contar el resto de la lista
-    int contador_resto = contarMovimientosRecursivo(nodo_actual->siguiente, cbu_alias_buscado);
-
-    // Caso recursivo: Comparar el nodo actual
     if (strcmp(nodo_actual->vipd.cuenta_destino, cbu_alias_buscado) == 0) {
-        return 1 + contador_resto; // Lo encontré, sumo 1 + lo que encontró el resto
+        return 1 + contador_resto;
     } else {
-        return 0 + contador_resto; // No lo encontré, sumo 0 + lo que encontró el resto
+        return 0 + contador_resto;
     }
 }
 
-// Esta es la función "envoltura" que llama el main
-int contarMovimientosAContacto(Lista_movimiento lista, const char* cbu_alias_buscado) {
-    // Inicia la recursividad desde el primer nodo (acceso)
-    return contarMovimientosRecursivo(lista.acc, cbu_alias_buscado);
+void funcion_contarMovsContacto() {     //ai
+    char cbu_buscado[50];
+
+    printf("Contar Movimientos a Contacto \n");
+    printf("Ingrese el CBU/Alias del contacto a contar: ");
+    scanf(" %49s", cbu_buscado);
+
+    int cantidad = funcion_contarRecursivo(miBilletera.acc, cbu_buscado);
+
+    printf("Resultado: Se encontraron %d movimientos a esa cuenta.\n", cantidad);
 }
 
 // (r) Calcular Monto (Ingresado/Debitado) por Mes
 
-void calcularMontosPorMes(Lista_movimiento lista, int mes_buscado, double *total_debito, double *total_credito) {
-    *total_debito = 0.0; // Inicializamos los punteros a 0
-    *total_credito = 0.0;
+void funcion_calcularMontosPorMes(int mes_buscado, float *p_total_debito, float *p_total_credito) {
 
-    Nodo *actual = lista.acc; // Empezamos por el primero
 
-    while (actual != NULL) {
-        // Si el movimiento es del mes que buscamos
-        if (actual->vipd.mes == mes_buscado) {
-            // Sumamos donde corresponda
-            if (actual->vipd.tipo_operacion == DEBITO) {
-                *total_debito += actual->vipd.monto;
-            } else {
-                *total_credito += actual->vipd.monto;
-            }
-        }
-        actual = actual->siguiente; // Avanzamos
-    }
-}
+    *p_total_debito = 0.0;
+    *p_total_credito = 0.0;
+
+
+    Nodo *nodo_actual = miBilletera.acc;
+
+    while (nodo_actual != NULL) {
+
+        Movimiento mov_actual = nodo_actual->vipd;
+
+        if (get_fecha_mes(mov_actual) == mes_buscado) {
+
+            if (get_tipo_operacion(mov_actual) == 1) { // 1 = DEBITO
+                *p_total_debito += get_monto(mov_actual);
+
+        } else { // 2 = CREDITO
+                *p_total_credito += get_monto(mov_actual);
+    }}
+        nodo_actual = nodo_actual->siguiente;
+}}
 
 // (d) Ingresar o Retirar Dinero (Actualiza saldo, crea movimiento)
 
+void funcion_ingresarRetirarDinero() {
+    int op_saldo;
+    float monto_saldo;
 
+    printf("\n--- Ingresar/Retirar Dinero ---\n");
+    printf("Saldo Actual: $%.2f\n", saldo_billetera);
+    printf("Seleccione la operacion:\n");
+    printf("  1. Ingresar Dinero (Crédito)\n");
+    printf("  2. Retirar Efectivo (Débito)\n");
+    printf("Opcion: ");
+    scanf("%d", &op_saldo);
+
+    if (op_saldo != 1 && op_saldo != 2) {
+        printf("Error: Opción no válida.\n");
+        return;
+    }
+
+    printf("Ingrese el Monto: ");
+    scanf("%f", &monto_saldo);
+
+    if (op_saldo == 2 && monto_saldo > saldo_billetera) { // 2 = Retirar
+        printf("Error: Saldo insuficiente. No se puede retirar $%.2f\n", monto_saldo);
+        return;
+    }
+
+    Movimiento mov_saldo;
+
+    set_id_mov(&mov_saldo, generador_id_mov());
+    set_monto(&mov_saldo, monto_saldo);
+    set_estado(&mov_saldo, 1); // 1 = OK
+
+    // (El PMI no dice que pidamos la fecha acá, así que ponemos una genérica)
+    // (Lo ideal sería pedirla, pero seguimos el ejemplo de 'cargar')
+    set_fecha_dia(&mov_saldo, 15);
+    set_fecha_mes(&mov_saldo, 10);
+
+    if (op_saldo == 1) { // --- Es un INGRESO ---
+        set_tipo_operacion(&mov_saldo, 2); // 2 = CREDITO
+        set_tipo_mov(&mov_saldo, 1); // 1 = TRANSFERENCIA (es lo más parecido)
+        set_cuenta_origen(&mov_saldo, "Banco_Externo");
+        set_cuenta_destino(&mov_saldo, MI_ALIAS_UNIPAGO);
+        set_motivo(&mov_saldo, "Ingreso_de_fondos");
+
+        saldo_billetera += monto_saldo;
+
+    } else { // --- Es un RETIRO ---
+        set_tipo_operacion(&mov_saldo, 1); // 1 = DEBITO
+        set_tipo_mov(&mov_saldo, 4); // 4 = RETIRA_EFECTIVO
+        set_cuenta_origen(&mov_saldo, MI_ALIAS_UNIPAGO);
+        set_cuenta_destino(&mov_saldo, "Cajero_Automatico");
+        set_motivo(&mov_saldo, "Retiro_en_efectivo");
+        saldo_billetera -= monto_saldo;
+    }
+
+    insertOrdenadoFecha(&miBilletera, mov_saldo);
+
+    printf("Operacion exitosa. Nuevo Saldo: $%.2f\n", saldo_billetera);
+}
 
 // (k) Eliminar Movs Anulados (Guarda en .txt, pide confirmación, elimina)
 
@@ -197,7 +272,23 @@ void eliminarAnuladosYGuardar(Lista_movimiento *lista) {
 
 // (h) Modificar Motivo por Nombre de Contacto (Busca contacto -> Busca movs)
 
+void Mod_Motivo_Nombr (Lista_contactos l,Lista_movimiento *l){
+char motiv1[100];
+char contactb[50];
+char cbu_alias[50]
+strcopy(cbu_alias,l->)
+int encontrado ;
 
+strcmp(contactb,get_alias_cbu(c))
+scanf(" %99[^\n]",motiv1);
+
+
+printf("¿De qué contacto querés modificar los movimientos? Ingrese el nombre: ");
+
+scanf("%s", nombre_buscado);
+if (strcmp(nombre_buscado,)==0)
+    strcopy(cbu_alias,l->arrayContactos[i].alias_cbu)
+}
 
 // ===================================
 // TAREAS AXEL
@@ -344,7 +435,7 @@ int main()
 {
     Lista_contactos contactos;
     Lista_movimiento movimientos;
-
+    Mod_Motivo_Nombr(&c,&m)
 
     return 0;
 }
