@@ -1,7 +1,7 @@
 #ifndef LISTAECONTACTO_H_INCLUDED
 #define LISTAECONTACTO_H_INCLUDED
 #include "Contacto.h"
-#define MAX 3
+#define MAX 100
 
 typedef struct{
     Contacto c[MAX];
@@ -62,3 +62,4 @@ void supress_lista_estatica(Lista_contacto *l){
 }
 
 #endif // LISTAECONTACTO_H_INCLUDED
+
