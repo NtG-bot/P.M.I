@@ -6,10 +6,7 @@
 #include "ListaVO_Movimiento.h"
 #include "Movimiento.h"
 
-long int generarNuevoIdMovimiento() {
-    static long int proximo_id = 1; // Se inicializa solo la primera vez EN ESTE ARCHIVO
-    return proximo_id++;
-}
+
 
 
 
@@ -25,3 +22,4 @@ int main()
     printf("Hello world!\n");
     return 0;
 }
+
