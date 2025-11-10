@@ -1,15 +1,8 @@
-// Archivo: Movimiento.h
-// -------------------
-// TDA Movimiento (Puro, sin printf/scanf)
-
 #ifndef MOVIMIENTO_H_INCLUDED
 #define MOVIMIENTO_H_INCLUDED
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <stdlib.h> // Para malloc, NULL
-#include <stdio.h>  // Para NULL
-
-// --- Estructuras ---
 typedef struct
 {
     int dia;

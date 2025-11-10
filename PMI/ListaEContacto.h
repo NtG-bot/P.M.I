@@ -4,7 +4,7 @@
 #define MAX 3
 
 typedef struct{
-    Contacto c;
+    Contacto c[MAX];
     int cur;
     int ultimo;
 }Lista_contacto;

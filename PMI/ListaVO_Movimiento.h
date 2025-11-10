@@ -1,9 +1,5 @@
 #ifndef LISTAVO_MOVIMIENTO_H_INCLUDED
 #define LISTAVO_MOVIMIENTO_H_INCLUDED
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "Movimiento.h"
 
 // --- Estructura del Nodo ---
@@ -92,6 +88,5 @@ void insert_lista_movimiento(Lista_movimiento *l, Movimiento m){
         l->cur = nuevoNodo; // Cursor queda en el nuevo
     }
 }
-
 
 #endif // LISTAVO_MOVIMIENTO_H_INCLUDED
