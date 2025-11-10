@@ -91,7 +91,97 @@ void funcion_realizar_movimiento() {
     // printf("Movimiento realizado. Saldo restante: $%.2f\n", saldo_billetera);
 }
 
+//ITEM B: FUNCION AUXILIAR, SOLO BUSCA, NO MUESTRA, DEVUELVE 1 SI ENCONTRO, 0 SI NO
+int buscar_por_id(Lista_movimiento m, int IDbus){
+    Movimiento aux;
+    reset_lista_movimiento(&m);
+    do{
+        aux = copy_list_movimiento(m);
+        if (get_id_mov(aux) == IDbus){
+            return 1;
+        }
+        else{
+            forward_lista_movimiento(&m);
+        }
+    }while(get_id_mov(aux) != IDbus && !isOos_lista_movimiento(m));
+    return 0;
+}
 
+//ITEM J: LISTA LOS MOVIMIENTOS ANULADOS
+void muestra_lista_mov_anulados(Lista_movimiento m){
+    Movimiento aux;
+    reset_lista_movimiento(&m);
+    while(!isOos_lista_movimiento(m)){
+        aux = copy_list_movimiento(m);
+        if(get_estado(aux) == 2){
+            printf("ID:%d\n", get_id_mov(aux));
+            printf("Cuenta Origen:%s\n", get_cuenta_origen(aux));
+            printf("Cuenta Destino:%s\n", get_cuenta_destino(aux));
+            switch(get_tipo_operacion(aux)){
+            case 1: printf("Tipo de Operacion:Debito\n"); break;
+            case 2: printf("Tipo de Operacion:Credito\n"); break;
+            }
+            switch(get_tipo_mov(aux)){
+            case 1: printf("Tipo de Movimiento:Transferencia\n"); break;
+            case 2: printf("Tipo de Movimiento:Pago QR\n"); break;
+            case 3: printf("Tipo de Movimiento:Servicio\n"); break;
+            case 4: printf("Tipo de Movimiento:Retiro\n"); break;
+            }
+            printf("Monto:%.2f\n", get_monto(aux));
+            printf("Motivo:%s\n", get_motivo(aux));
+            printf("Dia:%d\n", get_fecha_dia(aux));
+            printf("Mes:%d\n", get_fecha_mes(aux));
+            printf("Anio:2025\n");
+            switch(get_estado(aux)){
+            case 1: printf("Estado:Ok\n"); break;
+            case 2: printf("Estado:Anulado\n"); break;
+            }
+        }
+        forward_lista_movimiento(&m);
+    }
+}
+
+
+//ITEM ENHE: CARGA UN CONTACTO POR TECLADO   NO TE OLVIDES DE CONTROLAR QUE NO ES ESTE LLENA
+void carga_contacto_teclado(Lista_contacto *l, Contacto *c){
+    char aux_char[22];
+    int aux_int;
+    system("cls");
+    printf("--------------- NUEVO CONTACTO ---------------\n");
+    printf("Ingrese nombre:\n");
+    getchar();
+    scanf("%[^\n]s", aux_char);
+    set_nombre_contacto(c, aux_char);
+    printf("Ingrese alias/cbu:\n");
+    getchar();
+    scanf("%[^\n]s", aux_char);
+    set_alias_contacto(c, aux_char);
+    printf("Ingrese el tipo de cuenta:<1>Caja de Ahorro\n<2>Cuenta Corriente\n<3>Billetera Virtual\n");
+
+    scanf("%d", &aux_int);
+    set_tipo_cuenta_contacto(c, aux_int);
+    insert_lista_estatica(l, *c);
+}
+
+//ITEM G: MODIFICA EL MOTIVO DE UN MOVIMIENTO POR ID
+void modifica_motivo_por_id(Movimiento *m, Lista_movimiento *l, int id){
+    char aux_char[100];
+    if (buscar_por_id(*l, id) == 1){
+        Movimiento aux;
+        aux = copy_list_movimiento(*l);
+        printf("ingrese el nuevo motivo:\n");
+        getchar();
+        scanf("%[^\n]s", aux_char);
+        set_motivo(&aux, aux_char);
+        insert_lista_movimiento(l, aux);
+         while(!isOos_lista_movimiento(*l)){
+            forward_lista_movimiento(l);
+        }
+        suppress_lista_movimiento(l);
+    } else {
+        printf("Movimiento con ID %d no encontrado.\n", id);
+    }
+}
 
 
 int main()
@@ -113,6 +203,7 @@ do{
 
     return 0;
 }
+
 
 
 
