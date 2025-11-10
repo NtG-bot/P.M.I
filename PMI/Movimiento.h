@@ -25,7 +25,7 @@ typedef struct
 
 
 // Generador de ID CORREGIDO
-int generador_id_mov(){
+static int generador_id_mov(){
     int proximo_id = 1;
     return proximo_id++;
 }
@@ -118,3 +118,4 @@ int get_estado(Movimiento a){
 }
 
 #endif // MOVIMIENTO_H_INCLUDED
+
