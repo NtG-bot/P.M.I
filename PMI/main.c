@@ -11,10 +11,11 @@ int main()
 {
     Lista_contacto Lcontactos;
     Lista_movimiento LMovimientos
-
+    int IDbus,opcion,
 
     
     printf("Hello world!\n");
     return 0;
 }
+
 
