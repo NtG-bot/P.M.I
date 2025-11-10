@@ -1,0 +1,217 @@
+¡Perfecto! Esta es la lista de tareas completa, de la 'a' a la 's', resumiendo la lógica de cada punto.
+
+Esto es fundamental para organizarte.
+
+---
+### ## (a) Realizar Movimiento
+* **Qué hace:** Es la función más compleja. Pide al usuario *todos* los datos de un movimiento nuevo (`scanf`).
+* **Lógica:**
+    1.  Pide CBU/Alias destino, fecha, monto, motivo, tipo de operación, etc.
+    2.  **Valida Saldo:** Comprueba si `monto > saldo_billetera` (si es débito). Si no hay saldo, da error.
+    3.  **Valida Contacto:** Llama a `buscarContactoPorAlias` (del TDA `listaE_Contacto.h`).
+    4.  Si el contacto no existe, debe preguntar si se desea agendar. Si dice que sí, pide el nombre y tipo de cuenta, y llama a `InsertListaEs`.
+    5.  Crea el `Movimiento` (usando `set_...`).
+    6.  Actualiza el `saldo_billetera` (suma o resta).
+    7.  Llama a `funcion_insertOrdenadoFecha` (la función de `main.c`) para agregarlo a la lista.
+* **TDA Involucrados:** `Lista_movimiento` (para insertar) y `Lista_contactos` (para buscar/agendar).
+
+---
+### ## (b) Buscar un movimiento por id_mov
+* **Qué hace:** Es una función **interna** (auxiliar). No usa `printf` ni `scanf`.
+* **Lógica:**
+    1.  Recibe un `int id`.
+    2.  Recorre la `Lista_movimiento` desde el principio (`acc`) hasta el final (`NULL`).
+    3.  Si `get_id_mov(actual->vipd) == id`, devuelve un **puntero** a ese movimiento (`return &(actual->vipd);`).
+    4.  Si termina el recorrido y no lo encuentra, devuelve `NULL`.
+* **TDA Involucrados:** `Lista_movimiento` (solo lectura).
+
+---
+### ## (c) Mostrar Movimiento Buscado
+* **Qué hace:** Le pide al usuario un ID y muestra ese movimiento.
+* **Lógica:**
+    1.  Pide el ID con `scanf`.
+    2.  Llama a la función (b) `funcion_buscarMovimientoPorId(id)`.
+    3.  Si la función devuelve `NULL`, muestra "ID no encontrado".
+    4.  Si devuelve un puntero, usa `printf` y los `get_...` para mostrar todos los campos del movimiento.
+* **TDA Involucrados:** `Lista_movimiento`.
+
+---
+### ## (d) Ingresar o Retirar Dinero
+* **Qué hace:** Permite sumar o restar dinero a la billetera, generando un movimiento.
+* **Lógica:**
+    1.  Pide al usuario la operación (1: Ingresar, 2: Retirar) y el monto (`scanf`).
+    2.  Valida el saldo si es un retiro (`monto <= saldo_billetera`).
+    3.  Crea un `Movimiento` nuevo (usando `set_...`) con datos fijos (ej. Motivo: "Ingreso_de_fondos", Destino: "Cajero_Automatico").
+    4.  Actualiza la variable global `saldo_billetera`.
+    5.  Llama a `funcion_insertOrdenadoFecha` para registrarlo.
+* **TDA Involucrados:** `Lista_movimiento`.
+
+---
+### ## (e) Mostrar Últimos 10 Movimientos
+* **Qué hace:** (Este punto falta en tus comentarios, pero es un clásico). Muestra solo los primeros 10 movimientos.
+* **Lógica:**
+    1.  Llama a `reset_lista_movimiento`.
+    2.  Inicia un `while` con un contador: `int i = 0;`
+    3.  `while (!isOos_lista_movimiento(miBilletera) && i < 10)`
+    4.  Adentro: Muestra el movimiento (`copy` y `printf`), avanza (`forward`) e incrementa `i++`.
+* **TDA Involucrados:** `Lista_movimiento` (solo lectura).
+
+---
+### ## (f) Mostrar Movimientos Históricos
+* **Qué hace:** Muestra **todos** los movimientos, del más nuevo al más viejo.
+* **Lógica:**
+    1.  Llama a `reset_lista_movimiento`.
+    2.  Inicia un `while (!isOos_lista_movimiento(miBilletera))`.
+    3.  Adentro: Obtiene el movimiento (`copy_list_movimiento`), lo muestra (`printf`) y avanza (`forward_lista_movimiento`).
+* **TDA Involucrados:** `Lista_movimiento` (solo lectura).
+
+---
+### ## (g) Modificar el motivo por id_mov
+* **Qué hace:** Busca un movimiento por ID y permite cambiarle el motivo.
+* **Lógica:**
+    1.  Pide el ID (`scanf`).
+    2.  Llama a `funcion_buscarMovimientoPorId(id)`.
+    3.  Si devuelve un puntero, pide el nuevo motivo (`scanf`).
+    4.  Usa `set_motivo(puntero_encontrado, nuevo_motivo)` para cambiarlo.
+* **TDA Involucrados:** `Lista_movimiento`.
+
+---
+### ## (h) Modificar Motivo por Nombre de Contacto
+* **Qué hace:** Busca *todos* los movimientos hechos a un contacto (por su nombre) y permite modificarles el motivo.
+* **Lógica:**
+    1.  Pide el *nombre* del contacto (`scanf`).
+    2.  Recorre `Lista_contactos` (con un `for`) hasta encontrar ese nombre.
+    3.  Guarda el `alias_cbu` de ese contacto en una variable.
+    4.  Recorre `Lista_movimiento` (con `while !isOos`).
+    5.  Si `strcmp(movimiento_actual.cuenta_destino, alias_cbu_guardado) == 0`, significa que encontró uno. Pide el nuevo motivo (`scanf`) y usa `set_motivo` (en `miBilletera.cur->vipd`).
+* **TDA Involucrados:** `Lista_contactos` (para buscar) y `Lista_movimiento` (para modificar).
+
+---
+### ## (i) Anular Movimiento por ID
+* **Qué hace:** Busca un movimiento por ID y cambia su estado a "Anulado".
+* **Lógica:**
+    1.  Pide el ID (`scanf`).
+    2.  Llama a `funcion_buscarMovimientoPorId(id)`.
+    3.  Si devuelve un puntero, usa `set_estado(puntero_encontrado, 2)` (donde 2 = Anulado).
+* **TDA Involucrados:** `Lista_movimiento`.
+
+---
+### ## (j) Listar los movimientos anulados
+* **Qué hace:** Muestra por pantalla solo los movimientos que tengan estado "Anulado".
+* **Lógica:**
+    1.  Llama a `reset_lista_movimiento`.
+    2.  Inicia un `while (!isOos_lista_movimiento(miBilletera))`.
+    3.  Obtiene el movimiento (`copy_list_movimiento`).
+    4.  Si `get_estado(mov) == 2`, lo muestra (`printf`).
+    5.  Avanza (`forward_lista_movimiento`).
+* **TDA Involucrados:** `Lista_movimiento` (solo lectura).
+
+---
+### ## (k) Eliminar Movs Anulados (y Guardar)
+* **Qué hace:** Recorre la lista, guarda los anulados en "anulados.txt" y los borra de la memoria.
+* **Lógica:**
+    1.  Abre el archivo: `FILE *archivo = fopen("anulados.txt", "w");`.
+    2.  Pide confirmación al usuario (`scanf "s/n"`).
+    3.  Llama a `reset_lista_movimiento`.
+    4.  Inicia un `while (!isOos_lista_movimiento(miBilletera))`.
+    5.  Obtiene el movimiento (`copy_list_movimiento`).
+    6.  Si `get_estado(mov) == 2`:
+        * Lo escribe en el archivo (`fprintf`).
+        * Lo borra de la lista (`suppress_lista_movimiento(&miBilletera)`). (¡`suppress` ya avanza el cursor!).
+    7.  Si `get_estado(mov) != 2`:
+        * Solo avanza el cursor (`forward_lista_movimiento(&miBilletera)`).
+    8.  Cierra el archivo (`fclose(archivo)`).
+* **TDA Involucrados:** `Lista_movimiento`.
+
+---
+### ## (l) Mostrar Movs > 350k (Recursivo)
+* **Qué hace:** Muestra movimientos con montos muy altos usando recursividad.
+* **Lógica:**
+    1.  Creas una función "envoltura" (ej. `funcion_llamar_mostrarMayores`) que el menú llama.
+    2.  Esta envoltura llama a la función recursiva pasándole el inicio de la lista: `funcion_recursiva_mostrarMayores(miBilletera.acc)`.
+    3.  **Función Recursiva (`Nodo *nodo_actual`)**:
+        * **Caso Base:** `if (nodo_actual == NULL) { return; }`.
+        * **Caso General:**
+            * Si `get_monto(nodo_actual->vipd) > 350000`, muestra el movimiento (`printf`).
+            * Llama a `funcion_recursiva_mostrarMayores(nodo_actual->siguiente)`.
+* **TDA Involucrados:** `Lista_movimiento` (solo lectura).
+
+---
+### ## (m) Contar Movs a Contacto (Recursivo)
+* **Qué hace:** Pide un CBU/Alias y cuenta cuántos movimientos se hicieron a ese destino, usando recursividad.
+* **Lógica:**
+    1.  Pide el CBU/Alias (`scanf`).
+    2.  Llama a la función "envoltura".
+    3.  La envoltura llama a la recursiva: `int total = funcion_contarRecursivo(miBilletera.acc, cbu_buscado);`.
+    4.  **Función Recursiva (`Nodo *nodo_actual`, `char* cbu_buscado`)**:
+        * **Caso Base:** `if (nodo_actual == NULL) { return 0; }`.
+        * **Caso General:**
+            * Llama a la recursión: `int resto = funcion_contarRecursivo(nodo_actual->siguiente, cbu_buscado);`.
+            * Compara: `if (strcmp(nodo_actual->vipd.cuenta_destino, cbu_buscado) == 0)`.
+            * Si son iguales: `return 1 + resto;`.
+            * Si son distintos: `return 0 + resto;`.
+* **TDA Involucrados:** `Lista_movimiento` (solo lectura).
+
+---
+### ## (n) Descargar Movs a historicos.txt
+* **Qué hace:** Pide un rango de fechas (meses) y guarda todos los movimientos de ese rango en "historicos.txt".
+* **Lógica:**
+    1.  Pide mes de inicio y mes de fin (`scanf`).
+    2.  Abre el archivo: `FILE *archivo = fopen("historicos.txt", "w");`.
+    3.  Recorre `Lista_movimiento` (`while !isOos`).
+    4.  Si `get_fecha_mes(mov) >= mes_inicio && get_fecha_mes(mov) <= mes_fin`, escribe el movimiento en el archivo (`fprintf`).
+    5.  Cierra el archivo (`fclose`).
+* **TDA Involucrados:** `Lista_movimiento` (solo lectura).
+
+---
+### ## (o) Eliminar un Contacto
+* **Qué hace:** Pide un CBU/Alias y elimina ese contacto de la agenda.
+* **Lógica:**
+    1.  Pide el CBU/Alias (`scanf`).
+    2.  Recorre `Lista_contactos` (con un `for` de `0` a `l.ultimo`) para *encontrar* el índice (`i`) donde está el contacto.
+    3.  Si lo encuentra, debe mover el cursor (`cur`) a esa posición:
+        * `ResetListaEs(&miAgenda);`
+        * `for (int j = 0; j < i; j++) { ForwardsListaEs(&miAgenda); }`
+    4.  Llama a `SupressListaEs(&miAgenda)` (que borra en la posición `cur`).
+* **TDA Involucrados:** `Lista_contactos`.
+
+---
+### ## (p) Precarga Automática de 5 Contactos
+* **Qué hace:** Una función que se llama **una sola vez** al inicio del `main`.
+* **Lógica:**
+    1.  Verifica `if (IsEmptyListaEs(miAgenda))`.
+    2.  Si está vacía, crea 5 variables `Contacto` locales.
+    3.  Les carga datos fijos (ej. "Juan_Perez", "maria.cbu.001", etc.) usando `set_nombre`, `set_alias_cbu`, `set_tipo_cuenta`.
+    4.  Llama a `InsertListaEs` 5 veces.
+* **TDA Involucrados:** `Lista_contactos`.
+
+---
+### ## (q) Mostrar Todos los Contactos
+* **Qué hace:** Muestra por pantalla todos los contactos de la agenda.
+* **Lógica:**
+    1.  Recorre el array de `Lista_contactos` (con un `for` desde `i = miAgenda.ultimo` hasta `i >= 0`, para que muestre tipo Pila).
+    2.  En cada paso, accede a `miAgenda.arrayContactos[i]` y muestra los datos con `printf`.
+* **TDA Involucrados:** `Lista_contactos` (solo lectura).
+
+---
+### ## (r) Calcular Monto (Ingresado/Debitado) por Mes
+* **Qué hace:** Pide un mes y calcula el total de dinero que entró y que salió en ese mes.
+* **Lógica:**
+    1.  Pide el mes (`scanf`).
+    2.  Inicializa dos variables: `float total_debito = 0;` y `float total_credito = 0;`.
+    3.  Recorre `Lista_movimiento` (`while !isOos`).
+    4.  Si `get_fecha_mes(mov) == mes_buscado`:
+        * Si `get_tipo_operacion(mov) == 1` (Débito), suma a `total_debito`.
+        * Si `get_tipo_operacion(mov) == 2` (Crédito), suma a `total_credito`.
+    5.  Al final del `while`, muestra los dos totales con `printf`.
+* **TDA Involucrados:** `Lista_movimiento` (solo lectura).
+
+---
+### ## (s) Precarga Automática de 10 Movimientos
+* **Qué hace:** Similar a (p), se llama **una sola vez** al inicio del `main`.
+* **Lógica:**
+    1.  Verifica `if (isempty_lista_movimiento(miBilletera))`.
+    2.  Si está vacía, crea 10 variables `Movimiento` locales.
+    3.  Les carga datos fijos (ID, monto, fechas distintas, etc.) usando `set_...`.
+    4.  Llama a `funcion_insertOrdenadoFecha` 10 veces (para que queden ordenados por fecha).
+* **TDA Involucrados:** `Lista_movimiento`.
