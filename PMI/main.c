@@ -17,11 +17,15 @@ int main()
 {
     Lista_contacto Lcontactos;
     Lista_movimiento LMovimientos
+    Movimiento NewMovimiento;
+    Contacto NewContacto;
     int IDbus,opcion,opcion2;
-
+    float Saldo_en_cuenta;
+    
     printf("Hello world!\n");
     return 0;
 }
+
 
 
 
