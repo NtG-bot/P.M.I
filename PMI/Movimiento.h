@@ -1,8 +1,11 @@
 #ifndef MOVIMIENTO_H_INCLUDED
 #define MOVIMIENTO_H_INCLUDED
-#include <stdio.h>
-#include <stdlib.h>
+
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+// Estructuras
 typedef struct
 {
     int dia;
@@ -17,16 +20,15 @@ typedef struct
     int tipo_operacion; // 1:Debito, 2:Credito
     int tipo_mov;       // 1:Transf, 2:QR, 3:Servicio, 4:Retiro
     float monto;
-    char motivo[100];   // CORREGIDO: char[]
+    char motivo[100];
     Fecha fecha;
     int estado; // 1:OK, 2:Anulado
 } Movimiento;
 
 
 
-// Generador de ID CORREGIDO
-static int generador_id_mov(){
-    int proximo_id = 1;
+int generador_id_mov(){
+    static int proximo_id = 1;
     return proximo_id++;
 }
 
@@ -118,4 +120,3 @@ int get_estado(Movimiento a){
 }
 
 #endif // MOVIMIENTO_H_INCLUDED
-
