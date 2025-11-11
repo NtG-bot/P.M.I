@@ -291,6 +291,56 @@ void eliminarContactoPorAlias(Lista_contacto *c) {
     }
 }
 
+// (p) Realizar una precarga automática de contactos desde archivo
+Contacto crearContacto(const char *nombre, const char *alias, const char *tipoCuenta) {
+    Contacto c;
+    strcpy(c.nombre, nombre);
+    strcpy(c.alias_cbu, alias);
+    strcpy(c.tipo_cuenta, tipoCuenta);
+    return c;
+}
+
+// Guarda todos los contactos precargados en un archivo legible
+void guardarContactosEnArchivo(Lista_contacto c) {
+    FILE *arch = fopen("contactos.txt", "w");  
+    if (arch == NULL) {
+        printf("Error al crear el archivo de contactos.\n");
+        return;
+    }
+
+    fprintf(arch, "---LISTA DE CONTACTOS UNIPAGO---\n");
+    int i;
+    for (i = 0; i <= c.ultimo; i++) {
+        fprintf(arch, "Contacto %d\n", i + 1);
+        fprintf(arch, "Nombre: %s\n", c->c[i].nombre);
+        fprintf(arch, "Alias/CBU: %s\n", c->c[i].alias_cbu);
+        fprintf(arch, "Tipo de cuenta: %s\n", c->c[i].tipo_cuenta);
+        fprintf(arch, "------------------------------------------\n");
+    }
+
+    fclose(arch);
+    printf("Contactos guardados correctamente en 'contactos.txt'.\n");
+}
+
+// Precarga automática (punto p)
+void precargarContactos(Lista_contacto *c) {
+    init_lista_estatica(c);
+
+    Contacto c1 = crearContacto("Pilar Buteler",   "pili.bute",    "billetera virtual");
+    Contacto c2 = crearContacto("Matias Romero",  "mati.romero",  "caja de ahorro $");
+    Contacto c3 = crearContacto("Axel Diaz",   "adiaz.cbu",    "cuenta corriente $");
+    Contacto c4 = crearContacto("Josefina Buteler",  "jose.bute",  "billetera virtual");
+    Contacto c5 = crearContacto("Axel Ortega", "ax.or",   "caja de ahorro $");
+
+    insert_lista_estatica(c, c1);
+    insert_lista_estatica(c, c2);
+    insert_lista_estatica(c, c3);
+    insert_lista_estatica(c, c4);
+    insert_lista_estatica(c, c5);
+
+    printf(" Precarga automática de contactos completada (%d contactos)\n", c->ultimo + 1);
+
+    guardarContactosEnArchivo(*c);
 
 int main()
 {
@@ -311,6 +361,7 @@ do{
 
     return 0;
 }
+
 
 
 
