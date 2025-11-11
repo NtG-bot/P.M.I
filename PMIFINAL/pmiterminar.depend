@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1762868178 source:g:\pmiterminar\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"Contacto.h"
+	"ListaEContacto.h"
+	"ListaVO_Movimiento.h"
+	"Movimiento.h"
+
+1762741063 g:\pmiterminar\contacto.h
+	"string.h"
+
+1762828509 g:\pmiterminar\listaecontacto.h
+	"Contacto.h"
+
+1762826944 g:\pmiterminar\listavo_movimiento.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"Movimiento.h"
+
+1762827609 g:\pmiterminar\movimiento.h
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+

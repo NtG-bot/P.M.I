@@ -1,0 +1,26 @@
+---LISTA DE CONTACTOS UNIPAGO---
+Contacto 1
+Nombre: Pilar Buteler
+Alias/CBU: pili.bute
+Tipo de cuenta: 3
+------------------------------------------
+Contacto 2
+Nombre: Matias Romero
+Alias/CBU: mati.romero
+Tipo de cuenta: 1
+------------------------------------------
+Contacto 3
+Nombre: Axel Diaz
+Alias/CBU: adiaz.cbu
+Tipo de cuenta: 2
+------------------------------------------
+Contacto 4
+Nombre: Josefina Buteler
+Alias/CBU: jose.bute
+Tipo de cuenta: 3
+------------------------------------------
+Contacto 5
+Nombre: Axel Ortega
+Alias/CBU: ax.or
+Tipo de cuenta: 1
+------------------------------------------
