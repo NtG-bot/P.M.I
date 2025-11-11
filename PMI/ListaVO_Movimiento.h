@@ -1,21 +1,23 @@
 #ifndef LISTAVO_MOVIMIENTO_H_INCLUDED
 #define LISTAVO_MOVIMIENTO_H_INCLUDED
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "Movimiento.h"
 
-// --- Estructura del Nodo ---
+//  Estructura del Nodo
 typedef struct nodo{
     Movimiento vipd;
     struct nodo *siguiente;
 }Nodo;
 
-// --- Estructura de la Lista ---
+// Estructura de la Lista -
 typedef struct{
     Nodo *acc; // Puntero de Acceso (cabeza)
     Nodo *cur; // Puntero Cursor (actual)
     Nodo *aux; // Puntero Auxiliar (anterior)
 }Lista_movimiento;
-
-
 
 void init_lista_movimiento(Lista_movimiento *l){
     l->acc = NULL;
@@ -71,22 +73,52 @@ void suppress_lista_movimiento(Lista_movimiento *l) {
     free(nodoAEliminar);
 }
 
-// (Función 'insert' simple. La 'insertOrdenadoFecha' va en main.c)
-void insert_lista_movimiento(Lista_movimiento *l, Movimiento m){
-    Nodo *nuevoNodo = (Nodo*)malloc(sizeof(Nodo));
-    if (nuevoNodo == NULL) return;
-    nuevoNodo->vipd = m;
 
-    if((*l).cur == (*l).acc || l->acc == NULL){ // Al principio (o si está vacía)
-        nuevoNodo->siguiente = l->acc;
-        l->acc = nuevoNodo;
-        l->cur = nuevoNodo; // Cursor queda en el nuevo
-        l->aux = NULL;
-    } else { // En el medio
-        nuevoNodo->siguiente = l->cur;
-        l->aux->siguiente = nuevoNodo;
-        l->cur = nuevoNodo; // Cursor queda en el nuevo
+int funcion_esMasRecienteOIgual(Movimiento mov1, Movimiento mov2) {
+    if (get_fecha_mes(mov1) > get_fecha_mes(mov2)) {
+        return 1;
+    }
+    if (get_fecha_mes(mov1) == get_fecha_mes(mov2)) {
+        if (get_fecha_dia(mov1) >= get_fecha_dia(mov2)) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+
+
+void funcion_insertOrdenadoFecha(Lista_movimiento *LMovs, Movimiento mov) {
+    Nodo *nuevo = (Nodo*) malloc(sizeof(Nodo));
+    if (nuevo == NULL) {
+        printf("ERROR DE MEMORIA!\n");
+        return;
+    }
+    nuevo->vipd = mov;
+
+
+    if (isempty_lista_movimiento(*LMovs) || funcion_esMasRecienteOIgual(mov, LMovs->acc->vipd)) {
+        nuevo->siguiente = LMovs->acc;
+        LMovs->acc = nuevo;
+    }
+
+    else {
+        Nodo *actual = LMovs->acc;
+
+
+        while ( (actual->siguiente != NULL) &&
+                (funcion_esMasRecienteOIgual(actual->siguiente->vipd, mov)) )
+        {
+            actual = actual->siguiente;
+        }
+
+
+
+        nuevo->siguiente = actual->siguiente;
+        actual->siguiente = nuevo;
     }
 }
+
 
 #endif // LISTAVO_MOVIMIENTO_H_INCLUDED
