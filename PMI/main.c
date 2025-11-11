@@ -98,11 +98,11 @@ int buscar_por_id(Lista_movimiento *m, int IDbus){
     while(!isOos_lista_movimiento(*m)){
         aux = copy_list_movimiento(*m);
         if (get_id_mov(aux) == IDbus){
-            return 1; // Cursor de *m queda posicionado
+            return 1; 
         }
         forward_lista_movimiento(m);
     }
-    return 0; // Cursor de *m queda OOS
+    return 0; 
 }
 
 //ITEM J: LISTA LOS MOVIMIENTOS ANULADOS
@@ -165,22 +165,43 @@ void carga_contacto_teclado(Lista_contacto *l, Contacto *c){
 void modifica_motivo_por_id(Movimiento *m, Lista_movimiento *l, int id){
     char aux_char[100];
     Movimiento aux;
-
-    if (buscar_por_id(l, id) == 1){ // Busca y posiciona el cursor de 'l'
-        aux = copy_list_movimiento(*l); // Copia el elemento donde quedó el cursor
-
-        suppress_lista_movimiento(l); // Elimina el nodo posicionado
-
+    if (buscar_por_id(l, id) == 1){
+        aux = copy_list_movimiento(*l);  
         printf("ingrese el nuevo motivo:\n");
         getchar();
         scanf("%[^\n]s", aux_char);
         set_motivo(&aux, aux_char);
-
         insert_lista_movimiento(l, aux);
+         while(!isOosEs(*l)){
+            forwardsEs(l);                //elimina el "falso" elemento que se crea al llamar el insert
+        }
+        suppressEs(l);
         printf("Motivo del movimiento ID %d modificado con exito.\n", id);
 
     } else {
         printf("Movimiento con ID %d no encontrado.\n", id);
+    }
+}
+
+//ITEM F: MOSTRAR MOVIMIENTOS HISTORICOS, DEL MAS ACTUAL AL MAS ANTIGUO
+void mostrar_movimientos_historicos(Lista_movimiento l) {
+    char signo;
+    reset_lista_movimiento(&l);
+    while (!isOos_lista_movimiento(l)) {
+        Movimiento aux = copy_list_movimiento(l);
+        if (get_tipo_operacion(aux) == 2) {
+            signo = '+';
+        } else {                                // 1:Debito, 2:Credito
+            signo = '-';
+        }
+        printf("fecha:%d/%d\n", get_fecha_dia(aux), get_fecha_mes(aux));
+        switch (get_tipo_operacion(aux)){
+        case 1:{printf("Tipo de Operacion:Debito\n");}
+        case 2:{printf("Tipo de Operacion:Credito\n");}
+        }
+        printf("Motivo:%s\n", get_motivo(aux));
+        printf("Monto:%c%f", signo, get_monto(aux));
+        forward_lista_movimiento(&l);
     }
 }
 
@@ -361,6 +382,7 @@ do{
 
     return 0;
 }
+
 
 
 
