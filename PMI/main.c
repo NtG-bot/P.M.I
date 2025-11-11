@@ -357,7 +357,7 @@ void mostrar_mayores_A_350mil(Lista_movimiento m) {
     printf("----------------------------------------\n");
 }
 // (o) Eliminar un Contacto 
-int busaca_alias(Lista_contacto *l, char alias[]){
+int busaca_alias(Lista_contactos *l, char alias[]){
     Contacto aux;
     reset_lista_estatica(l);
     while(!isOos_lista_estatica(*l)){
@@ -403,6 +403,7 @@ do{
 
     return 0;
 }
+
 
 
 
