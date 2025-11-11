@@ -267,9 +267,9 @@ void eliminarContactoPorAlias(Lista_contacto *c) {
     printf("Ingrese el alias o CBU del contacto a eliminar: ");
     int encontrado = 0;
     int i;
-    for (i = 0; i <= c->ultimo; i++) { 
-        if (strcmp(c->c[i].alias_cbu, aliasBuscado) == 0) {
-            c->cur = i; 
+    for (i = 0; i <= c.ultimo; i++) { 
+        if (strcmp(c.c[i].alias_cbu, aliasBuscado) == 0) {
+            c.cur = i; 
             encontrado = 1;
             break;
         }
@@ -361,6 +361,7 @@ do{
 
     return 0;
 }
+
 
 
 
