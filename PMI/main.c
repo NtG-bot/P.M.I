@@ -172,10 +172,6 @@ void modifica_motivo_por_id(Movimiento *m, Lista_movimiento *l, int id){
         scanf("%[^\n]s", aux_char);
         set_motivo(&aux, aux_char);
         insert_lista_movimiento(l, aux);
-         while(!isOosEs(*l)){
-            forwardsEs(l);                //elimina el "falso" elemento que se crea al llamar el insert
-        }
-        suppressEs(l);
         printf("Motivo del movimiento ID %d modificado con exito.\n", id);
 
     } else {
@@ -463,6 +459,7 @@ do{
 
     return 0;
 }
+
 
 
 
