@@ -13,6 +13,7 @@
 // ===================================================================
 
 // --- Tareas de MODIFICACIÓN (usan Puntero *) ---
+int busaca_alias(Lista_contactos *l, char alias[]);
 void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr);
 int funcion_buscarMovimientoPorId(Lista_movimiento *LMovimientos, int idBuscado); // (b) Devuelve 1 o 0
 void funcion_ingresarRetirarDinero(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr);
@@ -270,7 +271,7 @@ void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LConta
     scanf("%99[^\n]", motivo_temp);
 
     // Usa la función 'buscarContactoPorAlias' que SÍ es TDA-Segura
-    if (buscarContactoPorAlias(LContactos, destino_temp) == 0) { // 0 = No encontrado
+    if (busaca_alias(LContactos, destino_temp) == 0) { // 0 = No encontrado
         printf("El destinatario '%s' no está en su agenda.\n", destino_temp);
         printf("¿Desea agendarlo? (s/n): ");
         scanf(" %c", &respuesta_agendar);
