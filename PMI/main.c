@@ -205,6 +205,56 @@ void mostrar_movimientos_historicos(Lista_movimiento l) {
     }
 }
 
+//ITEM N: DESCARGAR MOVIMIENTOS REALIZADOS EN UN PERIODO A UN ARCHIVO
+void descargar_movimientos_por_periodo(Lista_movimiento l, int mes1, int mes2 ) {
+    int contador_copiados = 0;
+    FILE *puntero = fopen("historicos.txt", "w");
+    if (puntero == NULL) {
+        printf("No se pudo abrir el archivo\n");
+        return;
+    } else {
+    fprintf(puntero, "%-10s | %-15s | %-15s | %-10s | %-40s | %s\n",
+            "Fecha", "Operacion", "Movimiento", "Monto", "Motivo", "Estado");
+    reset_lista_movimiento(&l);
+
+    while (!isOos_lista_movimiento(l)) {
+        Movimiento aux = copy_list_movimiento(l);
+          char tipo_operacion[10];
+            if (get_tipo_operacion(aux) == 1){
+                strcpy(tipo_operacion, "Debito");
+            } else {
+                strcpy(tipo_operacion, "Credito");
+            }
+            char tipo_movimiento[18];
+            switch(get_tipo_mov(aux)) {
+                case 1: strcpy(tipo_movimiento, "Transferencia"); break;
+                case 2: strcpy(tipo_movimiento, "Pago QR"); break;
+                case 3: strcpy(tipo_movimiento, "Servicio"); break;
+                case 4: strcpy(tipo_movimiento, "Retiro"); break;
+                default: strcpy(tipo_movimiento, "Desconocido"); break;
+            }
+            char tipo_estado[8];
+            if (get_estado(aux) == 1){
+                strcpy(tipo_estado, "Ok");
+            } else {
+                strcpy(tipo_estado, "Anulado");
+            }
+
+        if (get_fecha_mes(aux)>= mes1 && get_fecha_mes(aux)<= mes2) {
+
+            fprintf(puntero, "%02d/%02d   | %-15s | %-15s | $%-9.2f| %-40s | %s\n",get_fecha_dia(aux), get_fecha_mes(aux),
+            tipo_operacion,tipo_movimiento, get_monto(aux), get_motivo(aux), tipo_estado);
+            //lo baje sino muy largo XD
+            contador_copiados++;
+        }
+        forward_lista_movimiento(&l);
+    }
+
+    fclose(puntero);
+    printf("\nProceso completado: Se copiaron %d movimientos al archivo 'historicos.txt'.\n", contador_copiados);
+    }
+}
+
 void anularMovimientoPorId(Lista_movimiento *m, int idBuscado) {
     Movimiento aux;
 
@@ -382,6 +432,7 @@ do{
 
     return 0;
 }
+
 
 
 
