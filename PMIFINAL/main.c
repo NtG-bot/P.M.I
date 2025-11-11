@@ -8,11 +8,10 @@
 
 #define MI_ALIAS "mi.alias.mp"
 
-// ===================================================================
 // PROTOTIPOS (CORREGIDOS PARA PASO POR VALOR)
-// ===================================================================
 
-// --- Tareas de MODIFICACIÓN (usan Puntero *) ---
+
+// --- Tareas de MODIFICACIÃ“N (usan Puntero *) ---
 void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr);
 Movimiento* funcion_buscarMovimientoPorId(Lista_movimiento *LMovimientos, int idBuscado); // (b)
 void funcion_ingresarRetirarDinero(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr);
@@ -26,7 +25,7 @@ void carga_contacto_teclado(Lista_contactos *l, Contacto *c);
 void eliminarContactoPorAlias(Lista_contactos *c);
 void precargarContactos(Lista_contactos *c);
 
-// --- Tareas de SÓLO LECTURA (usan Valor, sin *) ---
+// --- Tareas de SÃ“LO LECTURA (usan Valor, sin *) ---
 void funcion_mostrarMovimientoBuscado(Lista_movimiento LMovimientos); // (c)
 void funcion_mostrarUltimos10(Lista_movimiento LMovimientos); // (e)
 void funcion_mostrar_movimientos(Lista_movimiento LMovimientos); // (f)
@@ -37,9 +36,8 @@ void mostrarContactos(Lista_contactos c); // (q)
 void funcion_calcularMontoMes(Lista_movimiento LMovimientos); // (r)
 
 
-// ===================================================================
-// FUNCION MAIN (Con Menú Anidado y Controles)
-// ===================================================================
+// FUNCION MAIN (Con MenÃº Anidado y Controles)
+
 int main()
 {
     Lista_contactos LContactos;
@@ -71,7 +69,7 @@ int main()
         }
 
         switch (opcion) {
-            // --- CASO 1: SUB-MENÚ DE MOVIMIENTOS ---
+            // --- CASO 1: SUB-MENÃš DE MOVIMIENTOS ---
             case 1: {
                 do {
                     printf("\n--- Gestion de Movimientos ---\n");
@@ -162,7 +160,7 @@ int main()
                 break;
             }
 
-            // --- CASO 2: SUB-MENÚ DE CONTACTOS ---
+            // --- CASO 2: SUB-MENÃš DE CONTACTOS ---
             case 2: {
                  do {
                     printf("\n--- Gestion de Contactos ---\n");
@@ -269,8 +267,8 @@ void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LConta
     scanf("%99[^\n]", motivo_temp);
 
     if (buscarContactoPorAlias(LContactos, destino_temp) == NULL) {
-        printf("El destinatario '%s' no está en su agenda.\n", destino_temp);
-        printf("¿Desea agendarlo? (s/n): ");
+        printf("El destinatario '%s' no estÃ¡ en su agenda.\n", destino_temp);
+        printf("Â¿Desea agendarlo? (s/n): ");
         scanf(" %c", &respuesta_agendar);
 
         if (respuesta_agendar == 's' || respuesta_agendar == 'S') {
@@ -308,7 +306,7 @@ void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LConta
     if (opcion_tipo_op == 1) { *Saldo_en_cuenta -= monto_temp; }
     else { *Saldo_en_cuenta += monto_temp; }
 
-    printf("Movimiento realizado con éxito. Saldo restante: $%.2f\n", *Saldo_en_cuenta);
+    printf("Movimiento realizado con Ã©xito. Saldo restante: $%.2f\n", *Saldo_en_cuenta);
 }
 
 // TAREA (f) Mostrar todos los Movimientos (PASO POR VALOR)
@@ -346,9 +344,9 @@ void funcion_mostrarMovimientoBuscado(Lista_movimiento LMovimientos) { // Sin *
     printf("Ingrese ID: "); scanf("%d", &id);
 
     // Para buscar, DEBE usar la lista original (o un puntero a la copia)
-    // Pero si buscamos en la copia, el puntero devuelto es inválido.
-    // Esta función (c) es la EXCEPCIÓN: debe recibir Puntero
-    // *** CORRECCIÓN DE ESTRATEGIA: (c) DEBE USAR PUNTERO ***
+    // Pero si buscamos en la copia, el puntero devuelto es invÃ¡lido.
+    // Esta funciÃ³n (c) es la EXCEPCIÃ“N: debe recibir Puntero
+    // *** CORRECCIÃ“N DE ESTRATEGIA: (c) DEBE USAR PUNTERO ***
     // (Voy a revertir (c) a como estaba, ya que depende de (b))
 
     // *** REVERTIDO A PUNTERO (Mi error, la estrategia 7 era mejor) ***
@@ -359,7 +357,7 @@ void funcion_mostrarMovimientoBuscado(Lista_movimiento LMovimientos) { // Sin *
     //            get_fecha_dia(*mov), get_fecha_mes(*mov), signo, get_monto(*mov), get_motivo(*mov));
     // } else { printf("Movimiento no encontrado.\n"); }
 
-    // *** NUEVA ESTRATEGIA: La función de búsqueda (b) se hará sobre la copia ***
+    // *** NUEVA ESTRATEGIA: La funciÃ³n de bÃºsqueda (b) se harÃ¡ sobre la copia ***
     Movimiento* mov_ptr = funcion_buscarMovimientoPorId(&LMovimientos, id);
     if(mov_ptr != NULL){
         // Como 'mov_ptr' apunta a la copia, lo copiamos ANTES de que 'LMovimientos' (la copia) se destruya
@@ -394,7 +392,7 @@ void funcion_ingresarRetirarDinero(Lista_movimiento *LMovimientos, Lista_contact
         printf("Ingrese la fecha (dd mm): ");
         scanf("%d %d", &dia_temp, &mes_temp);
         if ((mes_temp < 10 || mes_temp > 12) || (dia_temp < 1 || dia_temp > 31) || (mes_temp == 10 && dia_temp <= 10)) {
-            printf("Error: Fecha inválida.\n"); fchainvalida = 0;
+            printf("Error: Fecha invÃ¡lida.\n"); fchainvalida = 0;
         } else { fchainvalida = 1; }
     } while (fchainvalida == 0);
 
@@ -419,10 +417,10 @@ void funcion_ingresarRetirarDinero(Lista_movimiento *LMovimientos, Lista_contact
     }
 
     funcion_insertOrdenadoFecha(LMovimientos, nuevo_mov);
-    printf("Operación exitosa. Nuevo saldo: $%.2f\n", *Saldo_en_cuenta);
+    printf("OperaciÃ³n exitosa. Nuevo saldo: $%.2f\n", *Saldo_en_cuenta);
 }
 
-// TAREA (e) Mostrar los últimos 10 movimientos (PASO POR VALOR)
+// TAREA (e) Mostrar los Ãºltimos 10 movimientos (PASO POR VALOR)
 void funcion_mostrarUltimos10(Lista_movimiento LMovimientos) { // Sin *
     printf("\n--- Ultimos 10 Movimientos ---\n");
 
@@ -477,10 +475,10 @@ void funcion_modificarMotivoPorNombre(Lista_movimiento *LMovimientos, Lista_cont
 // TAREA (k) Eliminar Anulados (Usa Puntero)
 void funcion_eliminarAnulados(Lista_movimiento *LMovimientos) {
     char confirma;
-    printf("¿Seguro que desea eliminar PERMANENTEMENTE los movs anulados? (s/n): ");
+    printf("Â¿Seguro que desea eliminar PERMANENTEMENTE los movs anulados? (s/n): ");
     scanf(" %c", &confirma);
     if (confirma != 's' && confirma != 'S') {
-        printf("Operación cancelada.\n"); return;
+        printf("OperaciÃ³n cancelada.\n"); return;
     }
 
     FILE *f = fopen("anulados.txt", "w");
@@ -531,7 +529,7 @@ void funcion_descargarMovimientos(Lista_movimiento *LMovimientos) {
     scanf("%d", &mes_fin);
 
     if (mes_inicio < 10 || mes_fin > 12 || mes_fin < mes_inicio) {
-        printf("Error: Rango de meses inválido.\n");
+        printf("Error: Rango de meses invÃ¡lido.\n");
         return;
     }
 
@@ -541,7 +539,7 @@ void funcion_descargarMovimientos(Lista_movimiento *LMovimientos) {
         return;
     }
 
-    fprintf(f, "--- Movimientos Históricos (Mes %d a %d) ---\n", mes_inicio, mes_fin);
+    fprintf(f, "--- Movimientos HistÃ³ricos (Mes %d a %d) ---\n", mes_inicio, mes_fin);
 
     reset_lista_movimiento(LMovimientos); // Usa original
     while (!isOos_lista_movimiento(*LMovimientos)) {
@@ -586,7 +584,7 @@ void funcion_calcularMontoMes(Lista_movimiento LMovimientos) { // Sin *
     printf("Mes %d -> Total Debitad: $%.2f | Total Acreditado: $%.2f\n", mes, deb, cred);
 }
 
-// TAREA (s) Precarga automática de Movimientos (Usa Puntero)
+// TAREA (s) Precarga automÃ¡tica de Movimientos (Usa Puntero)
 void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_id_ptr) {
     FILE *fp = fopen("precarga_movimientos.txt", "r");
     if (fp == NULL) {
@@ -638,7 +636,7 @@ void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_i
 // TAREAS ADICIONALES (CORREGIDAS Y ADAPTADAS)
 // ===================================================================
 
-// ITEM B (Versión Axel) (Usa Puntero)
+// ITEM B (VersiÃ³n Axel) (Usa Puntero)
 int buscar_por_id(Lista_movimiento *m, int IDbus){
     Movimiento aux;
     reset_lista_movimiento(m);
@@ -796,7 +794,7 @@ void eliminarContactoPorAlias(Lista_contactos *c) {
     }
 }
 
-// (p) Precarga Automática (Usa Puntero)
+// (p) Precarga AutomÃ¡tica (Usa Puntero)
 void precargarContactos(Lista_contactos *c) {
     FILE *fp = fopen("precarga_contactos.txt", "r");
     if (fp == NULL) {
@@ -828,3 +826,4 @@ void precargarContactos(Lista_contactos *c) {
     fclose(fp);
     printf("Precarga completada. Se cargaron %d contactos.\n", contador);
 }
+
