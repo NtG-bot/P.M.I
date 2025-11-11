@@ -56,21 +56,10 @@ void supress_lista_estatica(Lista_contactos *l){
         l->c[i] = l->c[i + 1];
     }
     l->ultimo--;
-    if (l->ultimo == -1) { // Si quedo vacía
+    if (l->ultimo == -1) { // Si quedo vacÃ­a
         l->cur = -1;
     }
 }
 
-
-// Devuelve puntero al contacto si lo encuentra, NULL si no.
-Contacto* buscarContactoPorAlias(Lista_contactos *l, char alias_buscado[]) {
-    int i;
-    for (i = 0; i <= l->ultimo; i++) {
-        if (strcmp(l->c[i].alias_cbu, alias_buscado) == 0) {
-            return &(l->c[i]);
-        }
-    }
-    return NULL;
-}
 
 #endif // LISTAECONTACTO_H_INCLUDED
