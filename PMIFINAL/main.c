@@ -8,10 +8,10 @@
 
 #define MI_ALIAS "mi.alias.mp"
 
-// PROTOTIPOS (CORREGIDOS PARA PASO POR VALOR)
 
 
-// --- Tareas de MODIFICACIÓN (usan Puntero *) ---
+
+//  Tareas de MODIFICACIÓN 
 void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr);
 Movimiento* funcion_buscarMovimientoPorId(Lista_movimiento *LMovimientos, int idBuscado); // (b)
 void funcion_ingresarRetirarDinero(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr);
@@ -25,7 +25,7 @@ void carga_contacto_teclado(Lista_contactos *l, Contacto *c);
 void eliminarContactoPorAlias(Lista_contactos *c);
 void precargarContactos(Lista_contactos *c);
 
-// --- Tareas de SÓLO LECTURA (usan Valor, sin *) ---
+// --- Tareas de SÓLO LECTURA
 void funcion_mostrarMovimientoBuscado(Lista_movimiento LMovimientos); // (c)
 void funcion_mostrarUltimos10(Lista_movimiento LMovimientos); // (e)
 void funcion_mostrar_movimientos(Lista_movimiento LMovimientos); // (f)
@@ -36,7 +36,7 @@ void mostrarContactos(Lista_contactos c); // (q)
 void funcion_calcularMontoMes(Lista_movimiento LMovimientos); // (r)
 
 
-// FUNCION MAIN (Con Menú Anidado y Controles)
+// FUNCION MAIN
 
 int main()
 {
@@ -69,7 +69,7 @@ int main()
         }
 
         switch (opcion) {
-            // --- CASO 1: SUB-MENÚ DE MOVIMIENTOS ---
+            // CASO 1: SUB-MENÚ DE MOVIMIENTOS 
             case 1: {
                 do {
                     printf("\n--- Gestion de Movimientos ---\n");
@@ -95,7 +95,7 @@ int main()
                          int c; while ((c = getchar()) != '\n' && c != EOF); opcion2 = -1;
                     }
 
-                    // --- SWITCH MOVIMIENTOS (Llamadas corregidas) ---
+                    //  SWITCH MOVIMIENTOS 
                     switch(opcion2) {
                         // Casos de ESCRITURA (pasan puntero &)
                         case 1: realizar_movimiento(&LMovimientos, &LContactos, &Saldo_en_cuenta, &proximo_id); break;
@@ -160,7 +160,7 @@ int main()
                 break;
             }
 
-            // --- CASO 2: SUB-MENÚ DE CONTACTOS ---
+            //  CASO 2: SUB-MENÚ DE CONTACTOS 
             case 2: {
                  do {
                     printf("\n--- Gestion de Contactos ---\n");
@@ -196,7 +196,7 @@ int main()
                 break;
             }
 
-            // --- CASO 0: SALIR ---
+            //  CASO 0: SALIR 
             case 0:
                 printf("Saliendo...\n");
                 break;
@@ -214,9 +214,9 @@ int main()
     return 0;
 }
 
-// ===================================================================
+
 // DEFINICION DE FUNCIONES DE TAREAS (A-S)
-// ===================================================================
+
 
 // TAREA (a) Realizar Movimiento
 void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr) {
@@ -264,7 +264,7 @@ void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LConta
 
     int c; while ((c = getchar()) != '\n' && c != EOF);
     printf("Ingrese el motivo (max 99 chars): ");
-    scanf("%99[^\n]", motivo_temp);
+    scanf(" %99[^\n]", motivo_temp);
 
     if (buscarContactoPorAlias(LContactos, destino_temp) == NULL) {
         printf("El destinatario '%s' no está en su agenda.\n", destino_temp);
@@ -312,7 +312,7 @@ void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LConta
 // TAREA (f) Mostrar todos los Movimientos (PASO POR VALOR)
 void funcion_mostrar_movimientos(Lista_movimiento LMovimientos) { // Sin *
     printf("\n--- Historial de Movimientos ---\n");
-    // (El chequeo 'isempty' ya se hizo en main)
+    
 
     reset_lista_movimiento(&LMovimientos); // Usa &
     while (!isOos_lista_movimiento(LMovimientos)) {
@@ -342,22 +342,6 @@ Movimiento* funcion_buscarMovimientoPorId(Lista_movimiento *LMovimientos, int id
 void funcion_mostrarMovimientoBuscado(Lista_movimiento LMovimientos) { // Sin *
     int id;
     printf("Ingrese ID: "); scanf("%d", &id);
-
-    // Para buscar, DEBE usar la lista original (o un puntero a la copia)
-    // Pero si buscamos en la copia, el puntero devuelto es inválido.
-    // Esta función (c) es la EXCEPCIÓN: debe recibir Puntero
-    // *** CORRECCIÓN DE ESTRATEGIA: (c) DEBE USAR PUNTERO ***
-    // (Voy a revertir (c) a como estaba, ya que depende de (b))
-
-    // *** REVERTIDO A PUNTERO (Mi error, la estrategia 7 era mejor) ***
-    // Movimiento *mov = funcion_buscarMovimientoPorId(&LMovimientos, id); // Usa &
-    // if (mov) {
-    //     char signo = (get_tipo_operacion(*mov) == 1) ? '-' : '+';
-    //     printf("Encontrado: Fecha %d/%d, %c $%.2f, Motivo: %s\n",
-    //            get_fecha_dia(*mov), get_fecha_mes(*mov), signo, get_monto(*mov), get_motivo(*mov));
-    // } else { printf("Movimiento no encontrado.\n"); }
-
-    // *** NUEVA ESTRATEGIA: La función de búsqueda (b) se hará sobre la copia ***
     Movimiento* mov_ptr = funcion_buscarMovimientoPorId(&LMovimientos, id);
     if(mov_ptr != NULL){
         // Como 'mov_ptr' apunta a la copia, lo copiamos ANTES de que 'LMovimientos' (la copia) se destruya
@@ -632,10 +616,7 @@ void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_i
     printf("Precarga de %d movimientos completada (Debitos: $%.2f).\n", contador, debitos_totales);
 }
 
-// ===================================================================
 // TAREAS ADICIONALES (CORREGIDAS Y ADAPTADAS)
-// ===================================================================
-
 // ITEM B (Versión Axel) (Usa Puntero)
 int buscar_por_id(Lista_movimiento *m, int IDbus){
     Movimiento aux;
@@ -826,4 +807,5 @@ void precargarContactos(Lista_contactos *c) {
     fclose(fp);
     printf("Precarga completada. Se cargaron %d contactos.\n", contador);
 }
+
 
