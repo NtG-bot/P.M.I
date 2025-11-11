@@ -256,7 +256,7 @@ void descargar_movimientos_por_periodo(Lista_movimiento l, int mes1, int mes2 ) 
 }
 
 //ITEM S: PRECARGAR DE UN ARCHIVO 10 MOVIMIENTOS CON DIFERENTES MOVIMIENTOS
-void precargaAutomatica(Lista_movimiento *l) {
+void precarga_automatica_movimientos(Lista_movimiento *l) {
     Movimiento m;
     int contador = 0;
     FILE *puntero = fopen("precarga_movimientos.txt", "r");
@@ -463,6 +463,7 @@ do{
 
     return 0;
 }
+
 
 
 
