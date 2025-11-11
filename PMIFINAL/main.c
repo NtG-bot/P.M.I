@@ -8,24 +8,24 @@
 
 #define MI_ALIAS "mi.alias.mp"
 
+// PROTOTIPOS (TODAS LAS TAREAS - TDA SEGUROS)
 
 
-
-//  Tareas de MODIFICACIÓN 
+//  Tareas de MODIFICACIÓN (usan Puntero *)
 void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr);
-Movimiento* funcion_buscarMovimientoPorId(Lista_movimiento *LMovimientos, int idBuscado); // (b)
+int funcion_buscarMovimientoPorId(Lista_movimiento *LMovimientos, int idBuscado); // (b) Devuelve 1 o 0
 void funcion_ingresarRetirarDinero(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr);
 void funcion_modificarMotivoPorNombre(Lista_movimiento *LMovimientos, Lista_contactos *LContactos);
 void funcion_eliminarAnulados(Lista_movimiento *LMovimientos);
 void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_id_ptr);
-int buscar_por_id(Lista_movimiento *m, int IDbus);
 void modifica_motivo_por_id(Lista_movimiento *l, int id);
 void anularMovimientoPorId(Lista_movimiento *m, int idBuscado, float *Saldo_en_cuenta);
 void carga_contacto_teclado(Lista_contactos *l, Contacto *c);
 void eliminarContactoPorAlias(Lista_contactos *c);
 void precargarContactos(Lista_contactos *c);
+void funcion_descargarMovimientos(Lista_movimiento *LMovimientos); // (n)
 
-// --- Tareas de SÓLO LECTURA
+// Tareas de SÓLO LECTURA (usan Valor, sin *)
 void funcion_mostrarMovimientoBuscado(Lista_movimiento LMovimientos); // (c)
 void funcion_mostrarUltimos10(Lista_movimiento LMovimientos); // (e)
 void funcion_mostrar_movimientos(Lista_movimiento LMovimientos); // (f)
@@ -34,6 +34,7 @@ void mostrar_mayores_A_350mil(Lista_movimiento m); // (l)
 void funcion_contarMovsContacto(Lista_movimiento LMovimientos); // (m)
 void mostrarContactos(Lista_contactos c); // (q)
 void funcion_calcularMontoMes(Lista_movimiento LMovimientos); // (r)
+
 
 
 // FUNCION MAIN
@@ -50,7 +51,8 @@ int main()
     init_lista_estatica(&LContactos);
     init_lista_movimiento(&LMovimientos);
 
-    // Precargas (p) y (s)
+    // (Llamada a precarga (p) y (s) al inicio)
+
     precargarContactos(&LContactos);
     funcion_precarga_movimientos(&LMovimientos, &proximo_id);
 
@@ -69,7 +71,7 @@ int main()
         }
 
         switch (opcion) {
-            // CASO 1: SUB-MENÚ DE MOVIMIENTOS 
+            //  CASO 1: SUB-MENÚ DE MOVIMIENTOS
             case 1: {
                 do {
                     printf("\n--- Gestion de Movimientos ---\n");
@@ -95,7 +97,7 @@ int main()
                          int c; while ((c = getchar()) != '\n' && c != EOF); opcion2 = -1;
                     }
 
-                    //  SWITCH MOVIMIENTOS 
+                    // SWITCH MOVIMIENTOS (CON CONTROLES DE LISTA VACIA)
                     switch(opcion2) {
                         // Casos de ESCRITURA (pasan puntero &)
                         case 1: realizar_movimiento(&LMovimientos, &LContactos, &Saldo_en_cuenta, &proximo_id); break;
@@ -160,7 +162,7 @@ int main()
                 break;
             }
 
-            //  CASO 2: SUB-MENÚ DE CONTACTOS 
+            //  CASO 2: SUB-MENÚ DE CONTACTOS
             case 2: {
                  do {
                     printf("\n--- Gestion de Contactos ---\n");
@@ -196,7 +198,7 @@ int main()
                 break;
             }
 
-            //  CASO 0: SALIR 
+            // --- CASO 0: SALIR ---
             case 0:
                 printf("Saliendo...\n");
                 break;
@@ -266,6 +268,7 @@ void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LConta
     printf("Ingrese el motivo (max 99 chars): ");
     scanf(" %99[^\n]", motivo_temp);
 
+    // Usa la función 'buscarContactoPorAlias' que SÍ es TDA-Segura
     if (buscarContactoPorAlias(LContactos, destino_temp) == NULL) {
         printf("El destinatario '%s' no está en su agenda.\n", destino_temp);
         printf("¿Desea agendarlo? (s/n): ");
@@ -309,12 +312,11 @@ void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LConta
     printf("Movimiento realizado con éxito. Saldo restante: $%.2f\n", *Saldo_en_cuenta);
 }
 
-// TAREA (f) Mostrar todos los Movimientos (PASO POR VALOR)
-void funcion_mostrar_movimientos(Lista_movimiento LMovimientos) { // Sin *
+// TAREA (f) Mostrar todos los Movimientos
+void funcion_mostrar_movimientos(Lista_movimiento LMovimientos) {
     printf("\n--- Historial de Movimientos ---\n");
-    
 
-    reset_lista_movimiento(&LMovimientos); // Usa &
+    reset_lista_movimiento(&LMovimientos);
     while (!isOos_lista_movimiento(LMovimientos)) {
         Movimiento mov = copy_list_movimiento(LMovimientos);
         char signo = (get_tipo_operacion(mov) == 1) ? '-' : '+';
@@ -322,30 +324,32 @@ void funcion_mostrar_movimientos(Lista_movimiento LMovimientos) { // Sin *
         printf(" ID: %d | Fecha: %d/%d\n", get_id_mov(mov), get_fecha_dia(mov), get_fecha_mes(mov));
         printf(" Monto: %c $%.2f\n", signo, get_monto(mov));
         printf(" Motivo: %s\n", get_motivo(mov));
-        forward_lista_movimiento(&LMovimientos); // Usa &
+        forward_lista_movimiento(&LMovimientos);
     }
 }
 
-// TAREA (b) Buscar Movimiento por ID (Usa Puntero)
-Movimiento* funcion_buscarMovimientoPorId(Lista_movimiento *LMovimientos, int idBuscado) {
-    Nodo *actual = LMovimientos->acc;
-    while (actual != NULL) {
-        if (get_id_mov(actual->vipd) == idBuscado) {
-            return &(actual->vipd);
+// TAREA (b) Buscar Movimiento por ID (TDA-SEGURO)
+// Devuelve 1 si lo encuentra y posiciona el cursor, 0 si no.
+int funcion_buscarMovimientoPorId(Lista_movimiento *LMovimientos, int idBuscado) {
+    reset_lista_movimiento(LMovimientos);
+    while (!isOos_lista_movimiento(*LMovimientos)) {
+        Movimiento m = copy_list_movimiento(*LMovimientos);
+        if (get_id_mov(m) == idBuscado) {
+            return 1; // Encontrado, cursor posicionado
         }
-        actual = actual->siguiente;
+        forward_lista_movimiento(LMovimientos);
     }
-    return NULL;
+    return 0; // No encontrado
 }
 
-// TAREA (c) Mostrar Movimiento Buscado (PASO POR VALOR)
-void funcion_mostrarMovimientoBuscado(Lista_movimiento LMovimientos) { // Sin *
+// TAREA (c) Mostrar Movimiento Buscado (TDA-SEGURO)
+void funcion_mostrarMovimientoBuscado(Lista_movimiento LMovimientos) {
     int id;
     printf("Ingrese ID: "); scanf("%d", &id);
-    Movimiento* mov_ptr = funcion_buscarMovimientoPorId(&LMovimientos, id);
-    if(mov_ptr != NULL){
-        // Como 'mov_ptr' apunta a la copia, lo copiamos ANTES de que 'LMovimientos' (la copia) se destruya
-        Movimiento mov_copiado = *mov_ptr;
+
+    if(funcion_buscarMovimientoPorId(&LMovimientos, id) == 1){
+        Movimiento mov_copiado = copy_list_movimiento(LMovimientos);
+
         char signo = (get_tipo_operacion(mov_copiado) == 1) ? '-' : '+';
         printf("Encontrado: Fecha %d/%d, %c $%.2f, Motivo: %s\n",
                get_fecha_dia(mov_copiado), get_fecha_mes(mov_copiado), signo, get_monto(mov_copiado), get_motivo(mov_copiado));
@@ -354,7 +358,7 @@ void funcion_mostrarMovimientoBuscado(Lista_movimiento LMovimientos) { // Sin *
     }
 }
 
-// TAREA (d) Ingresar o Retirar Dinero (Usa Puntero)
+// TAREA (d) Ingresar o Retirar Dinero
 void funcion_ingresarRetirarDinero(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr) {
     int opcion, fchainvalida = 0, dia_temp, mes_temp;
     float monto;
@@ -390,12 +394,12 @@ void funcion_ingresarRetirarDinero(Lista_movimiento *LMovimientos, Lista_contact
 
     if (opcion == 2) {
         *Saldo_en_cuenta -= monto;
-        set_motivo(&nuevo_mov, "Retiro en efectivo");
+        set_motivo(&nuevo_mov, "Retiro_en_efectivo");
         set_tipo_operacion(&nuevo_mov, 1);
         set_cuenta_destino(&nuevo_mov, "Cajero");
     } else {
         *Saldo_en_cuenta += monto;
-        set_motivo(&nuevo_mov, "Ingreso de fondos");
+        set_motivo(&nuevo_mov, "Ingreso_de_fondos");
         set_tipo_operacion(&nuevo_mov, 2);
         set_cuenta_destino(&nuevo_mov, "Ventanilla");
     }
@@ -404,11 +408,11 @@ void funcion_ingresarRetirarDinero(Lista_movimiento *LMovimientos, Lista_contact
     printf("Operación exitosa. Nuevo saldo: $%.2f\n", *Saldo_en_cuenta);
 }
 
-// TAREA (e) Mostrar los últimos 10 movimientos (PASO POR VALOR)
-void funcion_mostrarUltimos10(Lista_movimiento LMovimientos) { // Sin *
-    printf("\n--- Ultimos 10 Movimientos ---\n");
+// TAREA (e) Mostrar los últimos 10 movimientos
+void funcion_mostrarUltimos10(Lista_movimiento LMovimientos) {
+    printf("\n   Ultimos 10 Movimientos   \n");
 
-    reset_lista_movimiento(&LMovimientos); // Usa &
+    reset_lista_movimiento(&LMovimientos);
     int i = 0;
     while (!isOos_lista_movimiento(LMovimientos) && i < 10) {
         Movimiento mov = copy_list_movimiento(LMovimientos);
@@ -416,47 +420,57 @@ void funcion_mostrarUltimos10(Lista_movimiento LMovimientos) { // Sin *
         printf("%d. %c $%.2f (ID: %d | Fecha: %d/%d)\n",
                i+1, signo, get_monto(mov),
                get_id_mov(mov), get_fecha_dia(mov), get_fecha_mes(mov));
-        forward_lista_movimiento(&LMovimientos); // Usa &
+        forward_lista_movimiento(&LMovimientos);
         i++;
     }
 }
 
-// TAREA (h) Modificar Motivo por Nombre (Usa Puntero)
+// TAREA (h) Modificar Motivo por Nombre
 void funcion_modificarMotivoPorNombre(Lista_movimiento *LMovimientos, Lista_contactos *LContactos) {
-    char nombre[50], cbu[50] = "", nuevo_mot[100];
+    char nombre[50], cbu[50], nuevo_mot[100];
     int encontrado = 0;
-    printf("Nombre del contacto: "); scanf("%49s", nombre);
+    printf("Nombre del contacto: "); scanf(" %49s", nombre);
 
-    Contacto* c = buscarContactoPorAlias(LContactos, nombre);
-    if (c == NULL) {
-         for (int i = 0; i <= LContactos->ultimo; i++) {
-            if (strcmp(get_nombre_contacto(LContactos->c[i]), nombre) == 0) {
-                c = &(LContactos->c[i]);
-                encontrado = 1;
-                break;
-            }
+    // 1. Buscar el CBU del contacto
+
+    Lista_contactos copia_contactos = *LContactos;
+    reset_lista_estatica(&copia_contactos);
+    while(!isOos_lista_estatica(copia_contactos)){
+        Contacto c = copy_lista_estatica(copia_contactos);
+        if(strcmp(get_nombre_contacto(c), nombre) == 0){
+            strcpy(cbu, get_alias_contacto(c));
+            encontrado = 1;
+            break;
         }
-    } else {
-        encontrado = 1;
+        forward_lista_estatica(&copia_contactos);
     }
 
     if (!encontrado) { printf("Contacto no encontrado.\n"); return; }
 
-    strcpy(cbu, get_alias_contacto(*c));
-
-    reset_lista_movimiento(LMovimientos); // Usa original
+    // 2. Recorrer la lista de movimientos
+    reset_lista_movimiento(LMovimientos);
     while (!isOos_lista_movimiento(*LMovimientos)) {
-        if (strcmp(get_cuenta_destino(LMovimientos->cur->vipd), cbu) == 0) {
-            printf("ID %d. Motivo actual: %s. Nuevo motivo: ", get_id_mov(LMovimientos->cur->vipd), get_motivo(LMovimientos->cur->vipd));
+
+        Movimiento mov_copia = copy_list_movimiento(*LMovimientos);
+
+        if (strcmp(get_cuenta_destino(mov_copia), cbu) == 0) {
+            printf("ID %d. Motivo actual: %s. Nuevo motivo: ", get_id_mov(mov_copia), get_motivo(mov_copia));
             int ch; while ((ch = getchar()) != '\n' && ch != EOF);
-            scanf("%99[^\n]", nuevo_mot);
-            set_motivo(&(LMovimientos->cur->vipd), nuevo_mot); // Modifica original
+            scanf(" %99[^\n]", nuevo_mot);
+
+
+            set_motivo(&mov_copia, nuevo_mot);
+            suppress_lista_movimiento(LMovimientos);
+            funcion_insertOrdenadoFecha(LMovimientos, mov_copia);
+
+
+        } else {
+             forward_lista_movimiento(LMovimientos);
         }
-        forward_lista_movimiento(LMovimientos); // Usa original
     }
 }
 
-// TAREA (k) Eliminar Anulados (Usa Puntero)
+// TAREA (k) Eliminar Anulados
 void funcion_eliminarAnulados(Lista_movimiento *LMovimientos) {
     char confirma;
     printf("¿Seguro que desea eliminar PERMANENTEMENTE los movs anulados? (s/n): ");
@@ -468,10 +482,10 @@ void funcion_eliminarAnulados(Lista_movimiento *LMovimientos) {
     FILE *f = fopen("anulados.txt", "w");
     if (!f) { printf("Error al abrir anulados.txt\n"); return; }
 
-    fprintf(f, "--- MOVIMIENTOS ANULADOS ELIMINADOS ---\n");
+    fprintf(f, "      MOVIMIENTOS ANULADOS ELIMINADOS     \n");
     int contador = 0;
 
-    reset_lista_movimiento(LMovimientos); // Usa original
+    reset_lista_movimiento(LMovimientos);
     while (!isOos_lista_movimiento(*LMovimientos)) {
         Movimiento m = copy_list_movimiento(*LMovimientos);
         if (get_estado(m) == 2) {
@@ -482,93 +496,118 @@ void funcion_eliminarAnulados(Lista_movimiento *LMovimientos) {
             fprintf(f, "Motivo: %s\n", get_motivo(m));
             fprintf(f, "Destino: %s\n", get_cuenta_destino(m));
 
-            suppress_lista_movimiento(LMovimientos); // Modifica original
+            suppress_lista_movimiento(LMovimientos);
             contador++;
         } else {
-            forward_lista_movimiento(LMovimientos); // Usa original
+            forward_lista_movimiento(LMovimientos);
         }
     }
     fclose(f);
     printf("%d anulados eliminados y guardados en 'anulados.txt'.\n", contador);
 }
 
-// TAREA (m) Contar Movs (Recursivo) (PASO POR VALOR)
-int funcion_contarRecursivo(Nodo *n, const char* cbu) {
-    if (n == NULL) return 0;
-    return (strcmp(get_cuenta_destino(n->vipd), cbu) == 0 ? 1 : 0) + funcion_contarRecursivo(n->siguiente, cbu);
+// TAREA (m) Contar Movs
+int _funcion_contarRecursivo(Lista_movimiento l, const char* cbu) { // Recibe por valor
+    if (isOos_lista_movimiento(l)) {
+        return 0; // Caso Base
+    }
+
+    Movimiento m = copy_list_movimiento(l);
+    forward_lista_movimiento(&l); // Mueve la copia
+
+    int resto = _funcion_contarRecursivo(l, cbu); // Llama con la copia movida
+
+    if (strcmp(get_cuenta_destino(m), cbu) == 0) {
+        return 1 + resto;
+    } else {
+        return 0 + resto;
+    }
 }
-void funcion_contarMovsContacto(Lista_movimiento LMovimientos) { // Sin *
+void funcion_contarMovsContacto(Lista_movimiento LMovimientos) {
     char cbu[50];
     printf("Ingrese CBU/Alias: "); scanf("%49s", cbu);
-    printf("Total movimientos: %d\n", funcion_contarRecursivo(LMovimientos.acc, cbu)); // Pasa m.acc
+
+    reset_lista_movimiento(&LMovimientos); // Prepara la copia
+    printf("Total movimientos: %d\n", _funcion_contarRecursivo(LMovimientos, cbu));
 }
 
-// TAREA (n) Descargar movimientos a historicos.txt (Usa Puntero)
-void funcion_descargarMovimientos(Lista_movimiento *LMovimientos) {
-    int mes_inicio, mes_fin, contador = 0;
-    printf("--- Descargar Movimientos por Rango ---\n");
-    printf("Ingrese mes de INICIO (10, 11 o 12): ");
-    scanf("%d", &mes_inicio);
-    printf("Ingrese mes de FIN (10, 11 o 12): ");
-    scanf("%d", &mes_fin);
+// TAREA (n) Descargar movimientos a historicos.txt
+void funcion_descargarMovimientos(Lista_movimiento *LMovimientos_ptr) {
+    Lista_movimiento l = *LMovimientos_ptr;
 
-    if (mes_inicio < 10 || mes_fin > 12 || mes_fin < mes_inicio) {
+    int mes1, mes2, contador_copiados = 0;
+    printf("   Descargar Movimientos por Rango   \n");
+    printf("Ingrese mes de INICIO (10, 11 o 12): ");
+    scanf("%d", &mes1);
+    printf("Ingrese mes de FIN (10, 11 o 12): ");
+    scanf("%d", &mes2);
+
+    if (mes1 < 10 || mes2 > 12 || mes2 < mes1) {
         printf("Error: Rango de meses inválido.\n");
         return;
     }
 
-    FILE *f = fopen("historicos.txt", "w");
-    if (f == NULL) {
-        printf("Error: No se pudo crear 'historicos.txt'.\n");
+    FILE *puntero = fopen("historicos.txt", "w");
+    if (puntero == NULL) {
+        printf("No se pudo abrir el archivo\n");
         return;
     }
 
-    fprintf(f, "--- Movimientos Históricos (Mes %d a %d) ---\n", mes_inicio, mes_fin);
+    fprintf(puntero, "%-10s | %-15s | %-15s | %-10s | %-40s | %s\n",
+            "Fecha", "Operacion", "Movimiento", "Monto", "Motivo", "Estado");
 
-    reset_lista_movimiento(LMovimientos); // Usa original
-    while (!isOos_lista_movimiento(*LMovimientos)) {
-        Movimiento m = copy_list_movimiento(*LMovimientos);
-        int mes_mov = get_fecha_mes(m);
+    reset_lista_movimiento(&l);
+    while (!isOos_lista_movimiento(l)) {
+        Movimiento aux = copy_list_movimiento(l);
 
-        if (mes_mov >= mes_inicio && mes_mov <= mes_fin) {
-            char tipo_op_str[10];
-            if (get_tipo_operacion(m) == 1) strcpy(tipo_op_str, "Debito");
-            else strcpy(tipo_op_str, "Credito");
+        if (get_fecha_mes(aux) >= mes1 && get_fecha_mes(aux) <= mes2) {
+            char tipo_operacion[10];
+            if (get_tipo_operacion(aux) == 1){ strcpy(tipo_operacion, "Debito"); }
+            else { strcpy(tipo_operacion, "Credito"); }
 
-            fprintf(f, "------------------\n");
-            fprintf(f, "ID: %d\n", get_id_mov(m));
-            fprintf(f, "Fecha: %d/%d\n", get_fecha_dia(m), get_fecha_mes(m));
-            fprintf(f, "Tipo: %s\n", tipo_op_str);
-            fprintf(f, "Monto: %.2f\n", get_monto(m));
-            fprintf(f, "Motivo: %s\n", get_motivo(m));
-            fprintf(f, "Destino: %s\n", get_cuenta_destino(m));
-            contador++;
+            char tipo_movimiento[18];
+            switch(get_tipo_mov(aux)) {
+                case 1: strcpy(tipo_movimiento, "Transferencia"); break;
+                case 2: strcpy(tipo_movimiento, "Pago QR"); break;
+                case 3: strcpy(tipo_movimiento, "Servicio"); break;
+                case 4: strcpy(tipo_movimiento, "Retiro"); break;
+                default: strcpy(tipo_movimiento, "Desconocido"); break;
+            }
+
+            char tipo_estado[8];
+            if (get_estado(aux) == 1){ strcpy(tipo_estado, "Ok"); }
+            else { strcpy(tipo_estado, "Anulado"); }
+
+            fprintf(puntero, "%02d/%02d     | %-15s | %-15s | $%-9.2f| %-40s | %s\n",
+                    get_fecha_dia(aux), get_fecha_mes(aux),
+                    tipo_operacion, tipo_movimiento, get_monto(aux), get_motivo(aux), tipo_estado);
+            contador_copiados++;
         }
-        forward_lista_movimiento(LMovimientos); // Usa original
+        forward_lista_movimiento(&l);
     }
 
-    fclose(f);
-    printf("Se guardaron %d movimientos en 'historicos.txt'.\n", contador);
+    fclose(puntero);
+    printf("\nProceso completado: Se copiaron %d movimientos al archivo 'historicos.txt'.\n", contador_copiados);
 }
 
 
-// TAREA (r) Calcular Monto por Mes (PASO POR VALOR)
-void funcion_calcularMontoMes(Lista_movimiento LMovimientos) { // Sin *
+// TAREA (r) Calcular Monto por Mes
+void funcion_calcularMontoMes(Lista_movimiento LMovimientos) {
     int mes; float deb = 0, cred = 0;
     printf("Ingrese mes (10, 11, 12): "); scanf("%d", &mes);
-    reset_lista_movimiento(&LMovimientos); // Usa &
+    reset_lista_movimiento(&LMovimientos);
     while (!isOos_lista_movimiento(LMovimientos)) {
         Movimiento m = copy_list_movimiento(LMovimientos);
         if (get_fecha_mes(m) == mes) {
             if (get_tipo_operacion(m) == 1) deb += get_monto(m);
             else cred += get_monto(m);
         }
-        forward_lista_movimiento(&LMovimientos); // Usa &
+        forward_lista_movimiento(&LMovimientos);
     }
     printf("Mes %d -> Total Debitad: $%.2f | Total Acreditado: $%.2f\n", mes, deb, cred);
 }
 
-// TAREA (s) Precarga automática de Movimientos (Usa Puntero)
+// TAREA (s) Precarga automática de Movimientos
 void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_id_ptr) {
     FILE *fp = fopen("precarga_movimientos.txt", "r");
     if (fp == NULL) {
@@ -587,6 +626,7 @@ void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_i
     int contador = 0;
     printf("Iniciando precarga de movimientos desde archivo...\n");
 
+    // Formato: 15 10 25000 Alquiler MI_ALIAS adiaz.cbu 1 1 1
     while (fscanf(fp, "%d %d %f %s %s %s %d %d %d",
            &dia, &mes, &monto, motivo, origen, destino,
            &tipo_op, &tipo_mov, &estado) == 9)
@@ -609,6 +649,7 @@ void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_i
         set_tipo_mov(&temp, tipo_mov);
         set_estado(&temp, estado);
         if (tipo_op == 1) debitos_totales += monto;
+
         funcion_insertOrdenadoFecha(LMovimientos, temp);
         contador++;
     }
@@ -616,8 +657,10 @@ void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_i
     printf("Precarga de %d movimientos completada (Debitos: $%.2f).\n", contador, debitos_totales);
 }
 
+
 // TAREAS ADICIONALES (CORREGIDAS Y ADAPTADAS)
-// ITEM B (Versión Axel) (Usa Puntero)
+
+// ITEM B Versión Axel
 int buscar_por_id(Lista_movimiento *m, int IDbus){
     Movimiento aux;
     reset_lista_movimiento(m);
@@ -631,10 +674,10 @@ int buscar_por_id(Lista_movimiento *m, int IDbus){
     return 0;
 }
 
-// ITEM J: LISTA MOVIMIENTOS ANULADOS (PASO POR VALOR)
-void muestra_lista_mov_anulados(Lista_movimiento m){ // Sin *
+// ITEM J: LISTA MOVIMIENTOS ANULADOS
+void muestra_lista_mov_anulados(Lista_movimiento m){
     Movimiento aux;
-    reset_lista_movimiento(&m); // Usa &
+    reset_lista_movimiento(&m);
     printf("\n--- Movimientos Anulados ---\n");
     int encontrados = 0;
     while(!isOos_lista_movimiento(m)){
@@ -644,12 +687,12 @@ void muestra_lista_mov_anulados(Lista_movimiento m){ // Sin *
                    get_id_mov(aux), get_monto(aux), get_motivo(aux));
             encontrados++;
         }
-        forward_lista_movimiento(&m); // Usa &
+        forward_lista_movimiento(&m);
     }
     if (encontrados == 0) printf("No hay movimientos anulados.\n");
 }
 
-// ITEM NH: CARGA CONTACTO POR TECLADO (Usa Puntero)
+// ITEM NH: CARGA CONTACTO POR TECLADO
 void carga_contacto_teclado(Lista_contactos *l, Contacto *c){
     if (isfull_lista_estatica(*l)) {
         printf("Error: Agenda llena.\n");
@@ -660,46 +703,59 @@ void carga_contacto_teclado(Lista_contactos *l, Contacto *c){
     printf("\n--- NUEVO CONTACTO ---\n");
     printf("Ingrese nombre: ");
     int ch; while ((ch = getchar()) != '\n' && ch != EOF);
-    scanf("%[^\n]s", aux_char);
+    scanf(" %[^\n]s", aux_char);
     set_nombre_contacto(c, aux_char);
 
     printf("Ingrese alias/cbu: ");
     while ((ch = getchar()) != '\n' && ch != EOF);
-    scanf("%[^\n]s", aux_char);
+    scanf(" %[^\n]s", aux_char);
     set_alias_contacto(c, aux_char);
 
     printf("Tipo de cuenta (1:CA, 2:CC, 3:BV): ");
-    scanf("%d", &aux_int);
+    scanf(" %d", &aux_int);
     set_tipo_cuenta_contacto(c, aux_int);
 
     insert_lista_estatica(l, *c);
     printf("Contacto cargado.\n");
 }
 
-// ITEM G: MODIFICA MOTIVO POR ID (Usa Puntero)
+// ITEM G: MODIFICA MOTIVO POR ID (TDA-SEGURO)
 void modifica_motivo_por_id(Lista_movimiento *l, int id){
     char aux_char[100];
+
+    // Usamos la función de búsqueda que POSICIONA el cursor
     if (buscar_por_id(l, id) == 1){
-         printf("Motivo actual: %s\n", get_motivo(l->cur->vipd));
+
+         Movimiento mov_copia = copy_list_movimiento(*l); // Copia
+
+         printf("Motivo actual: %s\n", get_motivo(mov_copia));
          printf("Ingrese nuevo motivo: ");
          int c; while ((c = getchar()) != '\n' && c != EOF);
-         scanf("%[^\n]s", aux_char);
-         set_motivo(&(l->cur->vipd), aux_char);
+         scanf(" %[^\n]s", aux_char);
+
+         set_motivo(&mov_copia, aux_char); // Modifica la copia
+
+         suppress_lista_movimiento(l); // Borra el original
+         funcion_insertOrdenadoFecha(l, mov_copia); // Re-inserta la copia
+
          printf("Motivo modificado.\n");
     } else {
         printf("Movimiento ID %d no encontrado.\n", id);
     }
 }
 
-// ITEM I: ANULAR MOVIMIENTO POR ID (Usa Puntero)
+// ITEM I: ANULAR MOVIMIENTO POR ID
 void anularMovimientoPorId(Lista_movimiento *m, int idBuscado, float *Saldo_en_cuenta) {
+
     if (buscar_por_id(m, idBuscado) == 1) {
-        if (get_estado(m->cur->vipd) == 1) {
 
-             Movimiento mov_anulado = copy_list_movimiento(*m);
-             float monto = get_monto(mov_anulado);
+        Movimiento mov_copia = copy_list_movimiento(*m);
 
-             if (get_tipo_operacion(mov_anulado) == 1) {
+        if (get_estado(mov_copia) == 1) {
+
+             float monto = get_monto(mov_copia);
+
+             if (get_tipo_operacion(mov_copia) == 1) {
                 *Saldo_en_cuenta += monto;
                 printf("Se reintegraron $%.2f a su saldo.\n", monto);
              } else {
@@ -707,7 +763,10 @@ void anularMovimientoPorId(Lista_movimiento *m, int idBuscado, float *Saldo_en_c
                 printf("Se debitaron $%.2f de su saldo por la anulacion.\n", monto);
              }
 
-             set_estado(&(m->cur->vipd), 2);
+             set_estado(&mov_copia, 2);
+             suppress_lista_movimiento(m);
+             funcion_insertOrdenadoFecha(m, mov_copia);
+
              printf("Movimiento ID %d anulado.\n", idBuscado);
              printf("Nuevo saldo: $%.2f\n", *Saldo_en_cuenta);
 
@@ -719,37 +778,69 @@ void anularMovimientoPorId(Lista_movimiento *m, int idBuscado, float *Saldo_en_c
     }
 }
 
-// (q) Mostrar Todos los Contactos (PASO POR VALOR)
-void mostrarContactos(Lista_contactos c) { // Sin *
+// (q) Mostrar Todos los Contactos
+void mostrarContactos(Lista_contactos c) {
     if (isempty_lista_estatica(c)) {
         printf("No hay contactos cargados.\n");
         return;
     }
-    printf("--- LISTA DE CONTACTOS (Orden de insercion) ---\n");
-    for (int i = 0; i <= c.ultimo; i++) {
-        // Usa 'c.' (punto) en lugar de 'c->'
-        printf("%d. %s (%s) - Tipo: %d\n", i+1,
-               c.c[i].nombre,
-               c.c[i].alias_cbu,
-               c.c[i].tipo_cuenta);
+    printf("   LISTA DE CONTACTOS (Orden de insercion) \n");
+
+    reset_lista_estatica(&c); // Prepara la copia
+    int i = 1;
+    while(!isOos_lista_estatica(c)) {
+        Contacto aux = copy_lista_estatica(c);
+        printf("%d. %s (%s) - Tipo: %d\n", i,
+               get_nombre_contacto(aux),
+               get_alias_contacto(aux),
+               get_tipo_cuenta_contacto(aux));
+        forward_lista_estatica(&c);
+        i++;
     }
 }
 
-// (l) Mostrar Movs > 350k (Recursivo - PASO POR VALOR)
-void _mostrar_mayores_recursivo(Nodo *actual) {
-    if (actual == NULL) return;
-
-    if (get_monto(actual->vipd) > 350000) {
-        printf("ID: %d | Monto: $%.2f\n", get_id_mov(actual->vipd), get_monto(actual->vipd));
+// (l) Mostrar Movs > 350k
+int _mostrar_mayores_recursivo(Lista_movimiento l) {
+    if (isOos_lista_movimiento(l)) {
+        return 0; // Caso Base
     }
-    _mostrar_mayores_recursivo(actual->siguiente);
+
+    Movimiento m = copy_list_movimiento(l);
+    forward_lista_movimiento(&l); // Mueve la copia
+
+    int contador_resto = _mostrar_mayores_recursivo(l);
+
+    if (get_monto(m) > 350000) {
+        printf("ID: %d | Monto: $%.2f\n", get_id_mov(m), get_monto(m));
+        return 1 + contador_resto;
+    }
+
+    return 0 + contador_resto;
 }
-void mostrar_mayores_A_350mil(Lista_movimiento m) { // Sin *
+void mostrar_mayores_A_350mil(Lista_movimiento m) {
     printf("\n--- Movimientos > $350.000 ---\n");
-    _mostrar_mayores_recursivo(m.acc); // Llama al helper con m.acc
+    reset_lista_movimiento(&m); // Prepara la copia
+    int total = _mostrar_mayores_recursivo(m);
+    if (total == 0) {
+        printf("No se encontraron movimientos que superen ese monto.\n");
+    }
 }
 
-// (o) Eliminar Contacto (Usa Puntero)
+// (o) Eliminar Contacto
+int busaca_alias(Lista_contactos *l, char alias[]){
+    Contacto aux;
+    reset_lista_estatica(l);
+    while(!isOos_lista_estatica(*l)){
+        aux = copy_lista_estatica(*l);\
+        if ( strcmp(get_alias_contacto(aux), alias) == 0 ){
+            return 1;
+        }
+        forward_lista_estatica(l);
+    }
+    return 0;
+}
+
+
 void eliminarContactoPorAlias(Lista_contactos *c) {
     if (isempty_lista_estatica(*c)) {
          printf("No hay contactos para eliminar.\n");
@@ -757,16 +848,10 @@ void eliminarContactoPorAlias(Lista_contactos *c) {
     }
     char alias[50];
     printf("Alias a eliminar: ");
-    scanf("%49s", alias);
+    scanf(" %49s", alias);
 
-    int encontrado = 0;
-    for (int i = 0; i <= c->ultimo; i++) {
-        if (strcmp(c->c[i].alias_cbu, alias) == 0) {
-            c->cur = i;
-            encontrado = 1; break;
-        }
-    }
-    if (encontrado) {
+
+    if (busaca_alias(c, alias) == 1) {
         printf("Contacto '%s' encontrado. Eliminando...\n", alias);
         supress_lista_estatica(c);
         printf("Contacto eliminado.\n");
@@ -775,7 +860,7 @@ void eliminarContactoPorAlias(Lista_contactos *c) {
     }
 }
 
-// (p) Precarga Automática (Usa Puntero)
+// (p) Precarga Automática
 void precargarContactos(Lista_contactos *c) {
     FILE *fp = fopen("precarga_contactos.txt", "r");
     if (fp == NULL) {
@@ -793,6 +878,7 @@ void precargarContactos(Lista_contactos *c) {
     int contador = 0;
     printf("Iniciando precarga de contactos desde archivo...\n");
 
+    // Formato:
     while (fscanf(fp, "%s %s %d", nombre_temp, alias_temp, &tipo_temp) == 3) {
         if (isfull_lista_estatica(*c)) {
             printf("Advertencia: La lista de contactos se lleno.\n");
@@ -807,5 +893,3 @@ void precargarContactos(Lista_contactos *c) {
     fclose(fp);
     printf("Precarga completada. Se cargaron %d contactos.\n", contador);
 }
-
-
