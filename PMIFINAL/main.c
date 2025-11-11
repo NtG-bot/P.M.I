@@ -8,11 +8,9 @@
 
 #define MI_ALIAS "mi.alias.mp"
 
-// ===================================================================
 // PROTOTIPOS (TODAS LAS TAREAS - TDA SEGUROS)
-// ===================================================================
 
-// --- Tareas de MODIFICACIÓN (usan Puntero *) ---
+// --- Tareas de MODIFICACIÓN (usan Puntero *)
 int busaca_alias(Lista_contactos *l, char alias[]);
 void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr);
 int funcion_buscarMovimientoPorId(Lista_movimiento *LMovimientos, int idBuscado); // (b) Devuelve 1 o 0
@@ -37,10 +35,8 @@ void funcion_contarMovsContacto(Lista_movimiento LMovimientos); // (m)
 void mostrarContactos(Lista_contactos c); // (q)
 void funcion_calcularMontoMes(Lista_movimiento LMovimientos); // (r)
 
+// FUNCION MAIN
 
-// ===================================================================
-// FUNCION MAIN (Con Menú Anidado y Controles)
-// ===================================================================
 int main()
 {
     Lista_contactos LContactos;
@@ -53,8 +49,6 @@ int main()
     init_lista_estatica(&LContactos);
     init_lista_movimiento(&LMovimientos);
 
-    // (Llamada a precarga (p) y (s) al inicio)
-    // (Si te sacan las precargas, el 'if (isempty...)' te salva)
     precargarContactos(&LContactos);
     funcion_precarga_movimientos(&LMovimientos, &proximo_id, &Saldo_en_cuenta); // Modificado
 
@@ -218,9 +212,7 @@ int main()
     return 0;
 }
 
-// ===================================================================
 // DEFINICION DE FUNCIONES DE TAREAS (A-S)
-// ===================================================================
 
 // TAREA (a) Realizar Movimiento
 void realizar_movimiento(Lista_movimiento *LMovimientos, Lista_contactos *LContactos, float *Saldo_en_cuenta, int *proximo_id_ptr) {
@@ -486,7 +478,7 @@ void funcion_mostrarUltimos10(Lista_movimiento LMovimientos) {
 void funcion_modificarMotivoPorNombre(Lista_movimiento *LMovimientos, Lista_contactos *LContactos) {
     char nombre[50], cbu[50] = "", nuevo_mot[100];
     int encontrado = 0;
-    printf("Nombre del contacto: "); scanf("%49s", nombre);
+    printf("Nombre del contacto: "); scanf("%49[^\n]", nombre);
 
     // 1. Buscar el CBU del contacto (TDA-SEGURO)
     Lista_contactos copia_contactos = *LContactos;
@@ -537,7 +529,7 @@ void funcion_eliminarAnulados(Lista_movimiento *LMovimientos) {
         printf("Operación cancelada.\n"); return;
     }
 
-    FILE *f = fopen("anulados.txt", "w");
+    FILE *f = fopen("anulados.txt", "a");
     if (!f) { printf("Error al abrir anulados.txt\n"); return; }
 
     fprintf(f, "--- MOVIMIENTOS ANULADOS ELIMINADOS ---\n");
@@ -706,7 +698,6 @@ void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_i
         set_tipo_mov(&temp, tipo_mov);
         set_estado(&temp, estado);
 
-        // CORRECCIÓN: Actualiza el saldo solo si no está anulado
         if (estado == 1) {
             if (tipo_op == 1) {
                 *Saldo_en_cuenta -= monto;
@@ -723,9 +714,6 @@ void funcion_precarga_movimientos(Lista_movimiento *LMovimientos, int *proximo_i
     printf("Precarga de %d movimientos completada (Debitos: $%.2f).\n", contador, debitos_totales);
 }
 
-// ===================================================================
-// TAREAS ADICIONALES (CORREGIDAS Y ADAPTADAS)
-// ===================================================================
 
 // ITEM B (Versión Axel, TDA-Seguro)
 int buscar_por_id(Lista_movimiento *m, int IDbus){
@@ -790,7 +778,7 @@ void carga_contacto_teclado(Lista_contactos *l, Contacto *c){
     printf("\n--- NUEVO CONTACTO ---\n");
     printf("Ingrese nombre: ");
     int ch; while ((ch = getchar()) != '\n' && ch != EOF);
-    scanf("%[^\n]s", aux_char);
+    scanf(" %[^\n]s", aux_char);
     set_nombre_contacto(c, aux_char);
 
     printf("Ingrese alias/cbu: ");
