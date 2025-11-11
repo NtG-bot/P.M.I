@@ -92,19 +92,17 @@ void funcion_realizar_movimiento() {
 }
 
 //ITEM B: FUNCION AUXILIAR, SOLO BUSCA, NO MUESTRA, DEVUELVE 1 SI ENCONTRO, 0 SI NO
-int buscar_por_id(Lista_movimiento m, int IDbus){
+int buscar_por_id(Lista_movimiento *m, int IDbus){
     Movimiento aux;
-    reset_lista_movimiento(&m);
-    do{
-        aux = copy_list_movimiento(m);
+    reset_lista_movimiento(m);
+    while(!isOos_lista_movimiento(*m)){
+        aux = copy_list_movimiento(*m);
         if (get_id_mov(aux) == IDbus){
-            return 1;
+            return 1; // Cursor de *m queda posicionado
         }
-        else{
-            forward_lista_movimiento(&m);
-        }
-    }while(get_id_mov(aux) != IDbus && !isOos_lista_movimiento(m));
-    return 0;
+        forward_lista_movimiento(m);
+    }
+    return 0; // Cursor de *m queda OOS
 }
 
 //ITEM J: LISTA LOS MOVIMIENTOS ANULADOS
@@ -166,20 +164,130 @@ void carga_contacto_teclado(Lista_contacto *l, Contacto *c){
 //ITEM G: MODIFICA EL MOTIVO DE UN MOVIMIENTO POR ID
 void modifica_motivo_por_id(Movimiento *m, Lista_movimiento *l, int id){
     char aux_char[100];
-    if (buscar_por_id(*l, id) == 1){
-        Movimiento aux;
-        aux = copy_list_movimiento(*l);
+    Movimiento aux;
+
+    if (buscar_por_id(l, id) == 1){ // Busca y posiciona el cursor de 'l'
+        aux = copy_list_movimiento(*l); // Copia el elemento donde quedó el cursor
+
+        suppress_lista_movimiento(l); // Elimina el nodo posicionado
+
         printf("ingrese el nuevo motivo:\n");
         getchar();
         scanf("%[^\n]s", aux_char);
         set_motivo(&aux, aux_char);
+
         insert_lista_movimiento(l, aux);
-         while(!isOos_lista_movimiento(*l)){
-            forward_lista_movimiento(l);
-        }
-        suppress_lista_movimiento(l);
+        printf("Motivo del movimiento ID %d modificado con exito.\n", id);
+
     } else {
         printf("Movimiento con ID %d no encontrado.\n", id);
+    }
+}
+
+void anularMovimientoPorId(Lista_movimiento *m, int idBuscado) {
+    Movimiento aux;
+
+    if (buscar_por_id(m, idBuscado) == 1) { // Busca y posiciona el cursor de 'm'
+        aux = copy_list_movimiento(*m); // Copia el elemento donde quedó el cursor
+
+        if (get_estado(aux) == 1) { // 1:OK
+             suppress_lista_movimiento(m); // Elimina el nodo posicionado
+             
+             set_estado(&aux, 2); // 2:Anulado
+             insert_lista_movimiento(m, aux);
+
+             printf("Movimiento con ID %d fue anulado correctamente.\n", idBuscado);
+        } else {
+            printf("El movimiento con ID %d ya estaba anulado.\n", idBuscado);
+        }
+    } else {
+        printf("No se encontró el movimiento con ID %d.\n", idBuscado);
+    }
+}
+// (q) Mostrar Todos los Contactos (Recorre la lista estática y muestra)
+void mostrarContactos(Lista_contacto c) { // CORREGIDO: Lista_contacto
+    if (isempty_lista_estatica(c)) { // CORREGIDO: isempty_lista_estatica
+        printf("No hay contactos cargados.\n");
+        return;
+    }
+
+    printf("--- LISTA DE CONTACTOS: ---\n");
+    
+    int i;
+    for (i = 0; i <= c.ultimo; i++) { // CORREGIDO: Recorre hasta c.ultimo
+        printf("Contacto %d:\n", i + 1);
+        printf("Nombre: %s\n", get_nombre_contacto(c));
+    printf("Alias/CBU: %s\n", get_alias_contacto(c));
+    printf("Tipo Cuenta: ");
+    switch(get_tipo_cuenta_contacto(c)) {
+        case 1: printf("Caja de Ahorro\n"); break;
+        case 2: printf("Cuenta Corriente\n"); break;
+        case 3: printf("Billetera Virtual\n"); break;
+        default: printf("Desconocido\n");
+    }
+        printf(" \n");
+    }
+    printf("---------------------------\n");
+}
+// (l) Mostrar Movs > 350k (Recursivo)
+
+void mostrar_mayores_A_350mil(Lista_movimiento m) {
+    Movimiento aux;
+    if (m == NULL)
+        return;
+    /* Si el movimiento supera los 350 mil, lo muestro*/
+    if (get_monto(aux) > 350000) {
+        printf("Datos:\n");
+        printf("ID Movimiento: %d\n", generador_id_mov(aux));
+        printf("Cuenta origen: %s\n", get_cuenta_origen(aux));
+        printf("Cuenta destino: %s\n", get_cuenta_destino(aux));
+        printf("Monto: %.2f\n", get_monto(aux));
+        switch(get_tipo_operacion(aux)){
+            case 1: printf("Tipo de Operacion:Debito\n"); break;
+            case 2: printf("Tipo de Operacion:Credito\n"); break;
+            }
+        switch(get_estado(aux)){
+            case 1: printf("Estado:Ok\n"); break;
+            case 2: printf("Estado:Anulado\n"); break;
+            }
+        forward_lista_movimiento(m);
+        mostrar_mayores_A_350mil(m);
+    }else{
+        mostrar_mayores_A_350mil(m);
+    }
+    
+}
+// (o) Eliminar un Contacto 
+void eliminarContactoPorAlias(Lista_contacto *c) { 
+    if (isempty_lista_estatica(*c)) { 
+        printf("No hay contactos para eliminar.\n");
+        return;
+    }
+    char aliasBuscado[50];
+    printf("Ingrese el alias o CBU del contacto a eliminar: ");
+    int encontrado = 0;
+    int i;
+    for (i = 0; i <= c->ultimo; i++) { 
+        if (strcmp(c->c[i].alias_cbu, aliasBuscado) == 0) {
+            c->cur = i; 
+            encontrado = 1;
+            break;
+        }
+    }
+    if (!encontrado) {
+        printf(" No se encontro ningun contacto con alias '%s'\n", aliasBuscado);
+        return;
+    }
+
+    char confirm;
+    printf(" ¿Está seguro que desea eliminar el contacto '%s'? (S/N): ", aliasBuscado);
+    scanf(" %c", &confirm);
+
+    if (confirm == 'S' || confirm == 's') {
+        supress_lista_estatica(c); 
+        printf("Contacto '%s' eliminado correctamente.\n", aliasBuscado);
+    } else {
+        printf("Eliminación cancelada\n");
     }
 }
 
@@ -203,6 +311,7 @@ do{
 
     return 0;
 }
+
 
 
 
