@@ -281,7 +281,6 @@ void precarga_automatica_movimientos(Lista_movimiento *l) {
     printf("Precarga realizada, %d movimentos cargados\n", contador);
 }
 
-
 void anularMovimientoPorId(Lista_movimiento *m, int idBuscado) {
     Movimiento aux;
 
@@ -303,142 +302,87 @@ void anularMovimientoPorId(Lista_movimiento *m, int idBuscado) {
     }
 }
 // (q) Mostrar Todos los Contactos (Recorre la lista estática y muestra)
-void mostrarContactos(Lista_contacto c) { // CORREGIDO: Lista_contacto
-    if (isempty_lista_estatica(c)) { // CORREGIDO: isempty_lista_estatica
+oid mostrarContactos(Lista_contacto c) { 
+    if (isempty_lista_estatica(c)) { 
         printf("No hay contactos cargados.\n");
         return;
     }
-
     printf("--- LISTA DE CONTACTOS: ---\n");
-    
-    int i;
-    for (i = 0; i <= c.ultimo; i++) { // CORREGIDO: Recorre hasta c.ultimo
-        printf("Contacto %d:\n", i + 1);
-        printf("Nombre: %s\n", get_nombre_contacto(c));
-    printf("Alias/CBU: %s\n", get_alias_contacto(c));
-    printf("Tipo Cuenta: ");
-    switch(get_tipo_cuenta_contacto(c)) {
-        case 1: printf("Caja de Ahorro\n"); break;
-        case 2: printf("Cuenta Corriente\n"); break;
-        case 3: printf("Billetera Virtual\n"); break;
-        default: printf("Desconocido\n");
-    }
+    reset_lista_estatica(&c);
+    while (!isOos_lista_estatica(c)) { 
+        Contacto aux = copy_lista_estatica(c);
+        printf("Nombre: %s\n", get_nombre_contacto(aux)); 
+        printf("Alias/CBU: %s\n", get_alias_contacto(aux));
+        printf("Tipo Cuenta: ");
+        switch(get_tipo_cuenta_contacto(aux)) {
+            case 1: printf("Caja de Ahorro\n"); break;
+            case 2: printf("Cuenta Corriente\n"); break;
+            case 3: printf("Billetera Virtual\n"); break;
+            default: printf("Desconocido\n");
+        }
         printf(" \n");
+        forward_lista_estatica(&c);
     }
     printf("---------------------------\n");
 }
 // (l) Mostrar Movs > 350k (Recursivo)
-
 void mostrar_mayores_A_350mil(Lista_movimiento m) {
     Movimiento aux;
-    if (m == NULL)
+    if (isempty_lista_movimiento(m)) { 
+        printf("La lista de movimientos esta vacia.\n");
         return;
-    /* Si el movimiento supera los 350 mil, lo muestro*/
-    if (get_monto(aux) > 350000) {
-        printf("Datos:\n");
-        printf("ID Movimiento: %d\n", generador_id_mov(aux));
-        printf("Cuenta origen: %s\n", get_cuenta_origen(aux));
-        printf("Cuenta destino: %s\n", get_cuenta_destino(aux));
-        printf("Monto: %.2f\n", get_monto(aux));
-        switch(get_tipo_operacion(aux)){
-            case 1: printf("Tipo de Operacion:Debito\n"); break;
-            case 2: printf("Tipo de Operacion:Credito\n"); break;
-            }
-        switch(get_estado(aux)){
-            case 1: printf("Estado:Ok\n"); break;
-            case 2: printf("Estado:Anulado\n"); break;
-            }
-        forward_lista_movimiento(m);
-        mostrar_mayores_A_350mil(m);
-    }else{
-        mostrar_mayores_A_350mil(m);
     }
-    
+    printf("\n--- Movimientos Mayores a $350,000.00 ---\n");
+    reset_lista_movimiento(&m); 
+    while (!isOos_lista_movimiento(m)) { 
+        aux = copy_list_movimiento(m);
+        if (get_monto(aux) > 350000.00) {
+            printf("----------------------------------------\n");
+            printf("Datos:\n");
+            printf("ID Movimiento: %d\n", get_id_mov(aux)); 
+            printf("Cuenta origen: %s\n", get_cuenta_origen(aux));
+            printf("Cuenta destino: %s\n", get_cuenta_destino(aux));
+            printf("Monto: %.2f\n", get_monto(aux));
+            switch(get_tipo_operacion(aux)){
+                case 1: printf("Tipo de Operacion:Debito\n"); break;
+                case 2: printf("Tipo de Operacion:Credito\n"); break;
+                }
+            switch(get_estado(aux)){
+                case 1: printf("Estado:Ok\n"); break;
+                case 2: printf("Estado:Anulado\n"); break;
+                }
+        }
+        forward_lista_movimiento(&m); 
+    }
+    printf("----------------------------------------\n");
 }
 // (o) Eliminar un Contacto 
-void eliminarContactoPorAlias(Lista_contacto *c) { 
-    if (isempty_lista_estatica(*c)) { 
-        printf("No hay contactos para eliminar.\n");
-        return;
-    }
-    char aliasBuscado[50];
-    printf("Ingrese el alias o CBU del contacto a eliminar: ");
-    int encontrado = 0;
-    int i;
-    for (i = 0; i <= c.ultimo; i++) { 
-        if (strcmp(c.c[i].alias_cbu, aliasBuscado) == 0) {
-            c.cur = i; 
-            encontrado = 1;
-            break;
+int busaca_alias(Lista_contacto *l, char alias[]){
+    Contacto aux;
+    reset_lista_estatica(l);
+    while(!isOos_lista_estatica(*l)){
+        aux = copy_lista_estatica(*l);\
+        if ( strcmp(get_alias_contacto(aux), alias) == 0 ){
+            return 1;
         }
+        forward_lista_estatica(l);
     }
-    if (!encontrado) {
-        printf(" No se encontro ningun contacto con alias '%s'\n", aliasBuscado);
-        return;
-    }
+    return 0;
+}
 
-    char confirm;
-    printf(" ¿Está seguro que desea eliminar el contacto '%s'? (S/N): ", aliasBuscado);
-    scanf(" %c", &confirm);
-
-    if (confirm == 'S' || confirm == 's') {
-        supress_lista_estatica(c); 
-        printf("Contacto '%s' eliminado correctamente.\n", aliasBuscado);
+void eliminarContactoPorTeclado(Lista_contacto *l) {
+    char aliasBuscado[33];
+    printf("\n--- Eliminar Contacto ---\n");
+    printf("Ingrese el Alias o CBU del contacto a eliminar:\n");
+    getchar();
+    scanf("%[^\n]s", aliasBuscado);
+    if (busaca_alias(l,aliasBuscado) == 1) {
+        supress_lista_estatica(l);
+        printf("Contacto con alias/cbu '%s' eliminado exitosamente.\n", aliasBuscado);
     } else {
-        printf("Eliminación cancelada\n");
+        printf("Error: No se encontro ningun contacto con el alias/cbu '%s'.\n", aliasBuscado);
     }
 }
-
-// (p) Realizar una precarga automática de contactos desde archivo
-Contacto crearContacto(const char *nombre, const char *alias, const char *tipoCuenta) {
-    Contacto c;
-    strcpy(c.nombre, nombre);
-    strcpy(c.alias_cbu, alias);
-    strcpy(c.tipo_cuenta, tipoCuenta);
-    return c;
-}
-
-// Guarda todos los contactos precargados en un archivo legible
-void guardarContactosEnArchivo(Lista_contacto c) {
-    FILE *arch = fopen("contactos.txt", "w");  
-    if (arch == NULL) {
-        printf("Error al crear el archivo de contactos.\n");
-        return;
-    }
-
-    fprintf(arch, "---LISTA DE CONTACTOS UNIPAGO---\n");
-    int i;
-    for (i = 0; i <= c.ultimo; i++) {
-        fprintf(arch, "Contacto %d\n", i + 1);
-        fprintf(arch, "Nombre: %s\n", c->c[i].nombre);
-        fprintf(arch, "Alias/CBU: %s\n", c->c[i].alias_cbu);
-        fprintf(arch, "Tipo de cuenta: %s\n", c->c[i].tipo_cuenta);
-        fprintf(arch, "------------------------------------------\n");
-    }
-
-    fclose(arch);
-    printf("Contactos guardados correctamente en 'contactos.txt'.\n");
-}
-
-// Precarga automática (punto p)
-void precargarContactos(Lista_contacto *c) {
-    init_lista_estatica(c);
-
-    Contacto c1 = crearContacto("Pilar Buteler",   "pili.bute",    "billetera virtual");
-    Contacto c2 = crearContacto("Matias Romero",  "mati.romero",  "caja de ahorro $");
-    Contacto c3 = crearContacto("Axel Diaz",   "adiaz.cbu",    "cuenta corriente $");
-    Contacto c4 = crearContacto("Josefina Buteler",  "jose.bute",  "billetera virtual");
-    Contacto c5 = crearContacto("Axel Ortega", "ax.or",   "caja de ahorro $");
-
-    insert_lista_estatica(c, c1);
-    insert_lista_estatica(c, c2);
-    insert_lista_estatica(c, c3);
-    insert_lista_estatica(c, c4);
-    insert_lista_estatica(c, c5);
-
-    printf(" Precarga automática de contactos completada (%d contactos)\n", c->ultimo + 1);
-
-    guardarContactosEnArchivo(*c);
 
 int main()
 {
@@ -459,6 +403,7 @@ do{
 
     return 0;
 }
+
 
 
 
