@@ -255,6 +255,37 @@ void descargar_movimientos_por_periodo(Lista_movimiento l, int mes1, int mes2 ) 
     }
 }
 
+//ITEM S: PRECARGAR DE UN ARCHIVO 10 MOVIMIENTOS CON DIFERENTES MOVIMIENTOS
+void precargaAutomatica(Lista_movimiento *l) {
+    Movimiento m;
+    int contador = 0;
+    FILE *puntero = fopen("precarga_movimientos.txt", "r");
+    if (puntero == NULL) {
+        printf("No se pudoa abrir el archivo\n");
+        return;
+    } else {
+         while (fscanf(puntero, "%d,%[^,],%[^,],%d,%d,%f,%[^,],%d,%d,%d\n", &m.id_mov, m.cuenta_origen, m.cuenta_destino, &m.tipo_operacion, &m.tipo_mov,
+        &m.monto, m.motivo, &m.fecha.dia, &m.fecha.mes, &m.estado) == 10) {
+        set_id_mov(&m, m.id_mov);
+        set_cuenta_origen(&m, m.cuenta_origen);
+        set_cuenta_destino(&m, m.cuenta_destino);
+        set_tipo_operacion(&m, m.tipo_operacion);
+        set_tipo_mov(&m, m.tipo_mov);
+        set_monto(&m, m.monto);
+        set_motivo(&m, m.motivo);
+        set_fecha_dia(&m, m.fecha.dia);
+        set_fecha_mes(&m, m.fecha.mes);
+        set_estado(&m, m.estado);
+        insert_lista_movimiento(l, m);
+        contador++;
+    }
+    }
+
+    fclose(puntero);
+    printf("Precarga realizada, %d movimentos cargados\n", contador);
+}
+
+
 void anularMovimientoPorId(Lista_movimiento *m, int idBuscado) {
     Movimiento aux;
 
@@ -432,6 +463,7 @@ do{
 
     return 0;
 }
+
 
 
 
